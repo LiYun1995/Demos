@@ -1,0 +1,27 @@
+.top{
+    width: 100%;
+    height: 50px;
+    background: gray;
+}
+.products{
+    display: inline-block;
+    width: 80%;
+    height: 100px;
+    list-style: none;
+}
+.products li{
+    float: left;
+    text-align: center;
+}
+.shopcar{
+    widows: 20%;
+    height: 500px;
+    float: right;
+}
+.item{
+    text-decoration:none;
+    color: black;
+    display: inline-block;
+    width:200px;
+    height: 300px;
+}

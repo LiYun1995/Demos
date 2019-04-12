@@ -1,0 +1,90 @@
+[
+	{
+		"field" : "bedNumber",
+		"title" : "床号"
+	},
+	{
+		"field" : "patientName",
+		"title" : "患者"
+	},
+	{
+		"field" : "sexName",
+		"title" : "性别"
+	},
+	{
+		"field" : "patientAge",
+		"title" : "年龄 "
+	},
+	{
+		"field" : "patientAge",
+		"title" : "科室"
+	},
+	{
+		"field" : "contentName",
+		"title" : "内容"
+	},
+	{
+		"field" : "specs",
+		"title" : "规格"
+	},
+	{
+		"field" : "unitPrice",
+		"title" : "单价"
+	},
+	{
+		"field" : "number",
+		"title" : "数量"
+	},
+	{
+		"field" : "bcaNumber",
+		"title" : "退费数量"
+	},
+	{
+		"field" : "money",
+		"title" : "退费金额"
+	},
+	{
+		"field" : "zytfstatus",
+		"title" : "状态"
+	},
+	{
+		"field" : "bcaCreationTime",
+		"title" : "发起退费时间"
+	},
+	{
+		"field" : "bcaCreateionUser",
+		"title" : "发起人"
+	},
+	{
+		"field" : "diseassAreaName",
+		"title" : "发起病区"
+	},
+	{
+		"field" : "workingGroup",
+		"title" : "开单科室"
+	},
+	{
+		"field" : "doctorName",
+		"title" : "开单医生"
+	},
+	{
+		"field" : "disposalGroup",
+		"title" : "执行科室"
+	},
+	{
+		"field" : "creationTime",
+		"title" : "计费时间"
+	},
+	{
+		"field" : "clinicNumber",
+		"title" : "患者住院号"
+	},
+	{
+		"field" : "auditTime",
+		"title" : "审核时间"
+	},
+	{
+		"field" : "auditUser",
+		"title" : "审核人"
+	}
+]

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        /* 1.数组的解构赋值 */
+
+        let [a, b, c] = [1, 2, 3];
+        //console.log(a,b,c)
+        let [e, [[f], g]] = [1, [[2], 3]]
+        //console.log(e,f,g);
+        let [h, ...i] = [1, 2, 3, 4, 5]
+        //console.log(h,i);
+        //解构不成功则为undefined
+        let [j] = [];
+        let [k, l] = [1];
+        //console.log(j,k,l); 
+
+        //不完全解构
+        let [m, n] = [1, 2, 3]
+        let [o, [p], q] = [1, [2, 3], 4]
+        console.log(m, n, o, p, q);
+
+        /*         //如果右边不是数组（可遍历的结构）报错
+                let [fucIE] = false;
+                let [fucIE] = 1;
+                let [fucIE] = 'asd'; */
+
+        /* 插播一下Map和Set */
+        //Map
+        let nameMap = new Map([['LYGG', 23], ['Mawaer', 24], ['LGG', 24]])
+        console.log(nameMap.get('LYGG'));
+        //初始化Map需要一个二维数组，或者直接初始化一个空数组，Map有以下方法
+        let testMap = new Map(); //初始化空Map
+        testMap.set('LYGG', 23); //添加新的key-value
+        testMap.set('Mawaer', 24);
+        testMap.has('LYGG');
+        testMap.has('Mawaer');// 是否存在key 返回true
+        testMap.get('LYGG') //23
+        testMap.delete('LYGG') //删除key
+        testMap.has('LYGG') // false
+
+        //Set和Map类似，也是一组key的集合，但是不存储value，由于key不能重复所以在Set中没有重复的key
+        //创建Set需要提供一个Array作为输入或者创建一个空的Set
+        let s = new Set();
+        let s1 = new Set([1, 2, 3]);
+
+        //重复元素在Set中自动过滤掉
+        let s2 = new Set([1, 2, 1, 2, 3, 4, 3, '3']);
+        console.log(s2);//Set(5) {1, 2, 3, 4, "3"}
+        //通过add(key)方法可以添加元素进Set中，可以重复添加但不生效；
+        s2.add(6);
+        console.log(s2);
+        s2.add(6);
+        console.log(s2);
+        //通过delete方法可以删除元素
+        s2.delete(1);
+        console.log(s2);//Set(5) {2, 3, 4, "3", 6}
+        console.log(...s2);
+        /* let l_arr = [1, 2, 2, 3];
+        let l_set = new Set(arr);
+        let l_newArr = Array.from(l_set);
+        console.log(l_newArr); // [1, 2, 3] 
+        console.log(...l_set)
+        这是一种数组去重方法 */
+
+        //对于Set结构也可以使用解构赋值
+        let [s3, s4, s5] = new Set(['a', 'b', 'c']);
+
+        //只要数据类型具有iterator接口，都可以采用数组形式的解构赋值
+
+        function* fibs() {
+            let a = 0;
+            let b = 1;
+            while (true) {
+                yield a;
+                [a, b] = [b, a + b]
+            }
+        }
+
+        let [first, second, third, forth, fifth] = fibs();
+
+        //解构赋值允许指定默认值
+        let [s6 = 'x'] = []
+        let [s7 = 'y', s8] = [, 'x']
+        //当数组成员===undefined时，默认值才生效
+        let [s9 = 'x'] = [undefined] //x
+        let [s10 = 'x'] = [null] //null
+
+        // 如果默认值是一个表达式，那么这个表达式是惰性求值的，即只有在用到的时候，才会求值。
+        function fuc() {
+            alert('Suprise mother fucker！')
+        }
+        let [s11 = fuc()] = ['x'];//fuc不执行，因为s11能够取到值
+
+        //默认值可以引用解构赋值的其他变量，但该变量必须已经声明。
+        /*      let [x = 1, y = x] = [];     // x=1; y=1
+                let [x = 1, y = x] = [2];    // x=2; y=2
+                let [x = 1, y = x] = [1, 2]; // x=1; y=2
+                let [x = y, y = 1] = [];     // ReferenceError: y is not defined */
+
+        /* 2.对象的解构赋值 */
+
+        let { o1, o2, o3 } = { o1: 'fuck', o2: 'die' } //对象没有顺序，变量必须与属性相同才能取到值。如果解构失败变量的值等于undefined
+        //o1 fuck 02 die o3 undefined
+
+        //将对象的方法赋值到某个变量
+        let { sin, cos } = Math;
+        const { log } = console;
+        log('hello');
+
+        //如果变量名与属性名不一致，必须写成下面这样。
+        let { o4: o5 } = { o4: '555', o6: '666' } //o4 is not defined  o4是匹配的模式，o5才是变量。真正被赋值的是变量o5，而不是模式o4。
+        //嵌套解构的对象
+        let o7 = {
+            o8: [
+                'hello',
+                { o10: 'world' }
+            ]
+        };
+
+        let { o8: [o9, { o10 }] } = o7; //o9:hello o10:world  注意，这时p是模式，不是变量，因此不会被赋值。如果p也要作为变量赋值，可以写成下面这样。
+        //let {o8,o8:[o9,{o10}]} = o7 // "Hello" "World" ["Hello", {o10: "World"}]
+        const node = {
+            loc: {
+                start: {
+                    line: 1,
+                    column: 5
+                }
+            }
+        };
+        let { loc, loc: { start }, loc: { start: { line } } } = node;
+        line // 1
+        loc  // Object {start: Object}
+        start // Object {line: 1, column: 5}
+
+        //嵌套赋值的例子
+        let e_obj = {};
+        let e_arr = [];
+
+        ({ o11: e_obj.foo, o12: e_arr[0] } = { o11: 'fuck♂you', o12: true })
+        e_obj
+        e_arr
+
+        //如果解构模式是嵌套的对象，而且子对象所在的父属性不存在，报错。
+        // let {foo:{bar} = {baz:'fuck♂you'}
+
+        //对象的解构赋值可以取到继承的属性
+        let o13 = {}
+        let o14 = { foo: 'fuck' }
+        Object.setPrototypeOf(o13, o14);
+        let { foo: o15 } = o13; // fuck
+
+        /* 对象解构默认值 */
+        let { o16 = 'x' } = {} //x
+        let { o17, o18 = 'y' } = { o17: 'x' } // x y
+        let { o19: o20 = 'x' } = {} //o20: x
+        let { o21: o22 = 'x' } = { o21: 'y' } //o22  y
+        //默认值生效的条件是对象的属性值 === undefined
+        /*  var { x = 3 } = { x: undefined };
+        x // 3
+        var { x = 3 } = { x: null };
+        x // null */
+
+        //注意点1）如果要将一个已经声明的变量用于解构赋值，必须非常小心。
+
+        // 错误的写法
+        //let x;
+        // { x } = { x: 1 };
+        // SyntaxError: syntax error
+        //上面代码的写法会报错，因为 JavaScript 引擎会将{ x } 理解成一个代码块，从而发生语法错误。只有不将大括号写在行首，避免 JavaScript 将其解释为代码块，才能解决这个问题。
+        // 正确的写法
+        //let x;
+        //({ x } = { x: 1 });
+
+        //注意点2）解构赋值允许等号左边的模式之中，不放置任何变量名。因此，可以写出非常古怪的赋值表达式。
+        /*      ({} = [true,false])
+                ({} = 'x')
+                ({} = []); 虽然没什么卵用但是可以执行 */
+
+        //注意点3)由于数组本质是特殊的对象，因此可以对数组进行对象的解构赋值
+        let a_arr = [1, 2, 3];
+        let { 0: a_first, [a_arr.length - 1]: a_last } = a_arr;
+        a_first //1
+        a_last //3
+
+        /* 3.字符串的解构赋值       字符串也可以解构赋值，是因为此时字符串被转换成了一个类似数组的对象*/
+        const [s20, s21, s22, s23] = 'LYGG'
+        s20 //L
+        s21 //Y
+        s22 //G
+        s23 //G
+
+        //类似数组的对象都有一个length属性，因此还可以对这个属性解构赋值。
+        let { length: len } = 'LYGG'
+        len //4
+
+        /* 4.数值和布尔值的解构赋值  先转换为对象*/
+        let { toString: s24 } = 123
+        s24 === Number.prototype.toString() //true
+        let { toString: s25 } = true
+        s25 === Boolean.prototype.toString() //true
+
+        //undefined和null无法转为对象，所以对它们进行解构赋值，都会报错。
+        // let { prop: x } = undefined; // TypeError
+        // let { prop: y } = null; // TypeError
+        /* 5.函数参数的解构赋值   函数参数也可以解构赋值 */
+        function add([x, y]) {
+            return x + y;
+        }
+        add([1, 2]);
+        //另一个例子
+        [[1, 2], [3, 4]].map(([a, b]) => a + b)
+        //函数参数的解构也可以使用默认值
+        function move({ x = 0, y = 0 } = {}) {
+            return [x, y]
+        }
+        move({ x: 3, y: 8 });//[3,8]
+        move({ x: 3 });//[3,0]
+        move({});//[0,0]
+        move();//[0,0]
+
+        /*         注意，下面的写法会得到不一样的结果。
+        
+                function move({ x, y } = { x: 0, y: 0 }) {
+                    return [x, y];
+                }
+                move({ x: 3, y: 8 }); // [3, 8]
+                move({ x: 3 }); // [3, undefined]
+                move({}); // [undefined, undefined]
+                move(); // [0, 0]
+                上面代码是为函数move的参数指定默认值，而不是为变量x和y指定默认值，所以会得到与前一种写法不同的结果。
+        
+                undefined就会触发函数参数的默认值。 
+                [1,undefined,2].map((x='yes') => x) //[ 1 , yes , 2]
+                */
+
+
+        /* 6.解构赋值的作用 */
+
+        //1）交换变量的值
+        let e1 = 1;
+        let e2 = 2;
+        [e1, e2] = [e2, e1]
+        //2)从函数返回多个值  函数只能返回一个值，如果要返回多个值，只能将它们放在数组或对象里返回。有了解构赋值，取出这些值就非常方便。
+        //返回一个数组
+        function example() {
+            return [1, 2, 3]
+        }
+        let [e3, e4, e5] = example();
+
+        //返回一个对象
+        function example2() {
+            return {
+                e6: 1,
+                e7: 2
+            }
+        }
+        let { e6, e7 } = example2();
+
+        //（3）函数参数的定义
+
+        //解构赋值可以方便地将一组参数与变量名对应起来。
+        //参数是一组有次序的值
+        function example3([x, y, z]) { }
+        example3([1, 2, 3]);
+        //参数是一组无序的值
+        function example4({ x, y, z }) { }
+        example4({ x: 1, y: 2, z: 3 });
+
+        //（4）提取 JSON 数据
+        //解构赋值对提取 JSON 对象中的数据，尤其有用。
+
+        let jsonData = {
+            id: 42,
+            status: "OK",
+            data: [867, 5309]
+        };
+        let { id, status, data: number } = jsonData;
+        log(id, status, number);
+
+        //（5）函数参数的默认值
+        /* jQuery.ajax = function (url, {
+            async = true,
+            beforeSend = function () { },
+            cache = true,
+            complete = function () { },
+            crossDomain = false,
+            global = true,
+            // ... more config
+        } = {}) {
+            // ... do stuff
+        };
+        指定参数的默认值，就避免了在函数体内部再写var foo = config.foo || 'default foo';这样的语句。 */
+
+        //（6）遍历 Map 结构
+        //任何部署了 Iterator 接口的对象，都可以用for...of循环遍历。Map 结构原生支持 Iterator 接口，配合变量的解构赋值，获取键名和键值就非常方便。
+        const e_map = new Map();
+        e_map.set('first', 'Hello');
+        e_map.set('second', 'LYGG');
+
+        for (let [key, value] of e_map) {
+            log(key + ' is ' + value);
+        }
+
+        //如果只想获取键名，或者只想获取键值，可以写成下面这样。
+    /*     // 获取键名
+        for (let [key] of map) {
+            // ...
+        }
+
+        // 获取键值
+        for (let [, value] of map) {
+            // ...
+        } */
+
+        //（7）输入模块的指定方法
+        //加载模块时，往往需要指定输入哪些方法。解构赋值使得输入语句非常清晰
+        //const { SourceMapConsumer, SourceNode } = require("source-map");
+    </script>
+</body>
+
+</html>

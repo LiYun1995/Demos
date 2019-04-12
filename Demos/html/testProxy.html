@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        // var obj = new Proxy({}, {
+        //     get: function (target, key, receiver) {
+        //         console.log(target, key, receiver)
+        //     },
+        //     set: function (target, key, value, receiver) {
+        //         console.log(target, key, value, receiver)
+        //     }
+        // })
+
+        // obj.count = 1;
+        // ++obj.count;
+
+        // var prox = new Proxy({}, {
+        //     get: function (target, property) {
+        //         return 35;
+        //     }
+        // })
+        // let target = {};
+        // let handler = {};
+        // var obj2 = { proxy: new Proxy(target, handler) };
+
+        // //Proxy实例作为其他对象的原型对象
+        // var prox2 = new Proxy({}, {
+        //     get: function (target, property) {
+        //         return 35
+        //     }
+        // })
+
+        // let zui = Object.create(prox2);
+        // console.log(zui.time);
+
+        // var handler = {
+        //     get: function (target, name) {
+        //         if (name === 'prototype') {
+        //             return Object.prototype;
+        //         }
+        //         return 'Hello' + name;
+        //     },
+        //     apply: function (target, thisbinding, args) {
+        //         return args[0]
+        //     },
+        //     construct: function (target, args) {
+        //         return { value: args[1] };
+        //     }
+        // };
+
+        // var fproxy = new Proxy(function (x, y) {
+        //     return x + y;
+        // }, handler);
+
+        // console.log(fproxy(6, 2));
+        // console.log(new fproxy(1, 2));
+        // console.log(fproxy.prototype === Object.prototype);
+        // console.log(fproxy.foo === "Hellofoo") 
+
+
+
+        // //下面是get()
+        // var person = {name: '张三'};
+        // var proxy = new Proxy(person,{
+        //     get:function(target, property){
+        //         if(property in target){
+        //             return target[property]
+        //         }else{
+        //             throw new ReferenceError("property"+property+"does not exist")
+        //         }
+        //     }
+        // })
+
+        // let proto = new Proxy({},{
+        //     get(target, propertyKey, receiver){
+        //         console.log('GET' + propertyKey);
+        //         return target[propertyKey];
+        //     }
+        // });
+
+        // let obj = Object.create(proto);
+        // obj.foo;
+
+        // function createArray(...elements) {
+        //     let handler = {
+        //         get(target, property, receiver) {
+        //             let index = Number(property);
+        //             if (index < 0) {
+        //                 property = String(target.length + index);
+        //             }
+        //             return Reflect.get(target, property, receiver);
+        //         }
+        //     };
+
+        //     let target = [];
+        //     target.push(...elements);
+        //     return new Proxy(target, handler);
+        // }
+
+        // let myArr = createArray('a', 'b', 'c');
+        // myArr[-1];
+
+
+        //将读取属性操作get转变为执行某个函数，从而实现属性的链式操作
+        // var pipe = (function () {
+        //     return function (value) {
+        //         var funcStack = [];
+        //         var oproxy = new Proxy({}, {
+        //             get: function (pipeObject, fnName) {
+        //                 if (fnName === 'get') {
+        //                     return funcStack.reduce(function (val, fn) {
+        //                         return fn(val);
+        //                     }, value);
+        //                 }
+        //                 funcStack.push(window[fnName]);
+        //                 return oproxy;
+        //             }
+
+        //         })
+        //         return oproxy;
+        //     }
+        // }());
+
+        // var double = n => n * 2;
+        // var pow = n => n * n;
+        // var reverseInt = n => n.toString().split('').reverse().join('') | 0;
+
+        // console.log(pipe(3).double.pow.reverseInt.get) 
+
+        //回味一下js面向对象
+
+        // function Man(name,age){
+        //     this.name = name;
+        //     this.age = age;
+        // }
+        // Man.prototype.work = function(){
+        //     console.log('i love working i am '+this.name+this.age+'岁');
+        // }
+        // var lygg = new Man('LYGG',23)
+        // lygg.work();
+
+        //ES6改写
+
+
+        let methodName = 'iamMethod'
+        class Man {
+            constructor(name, age) {
+                this.name = name;
+                this.age = age;
+            }
+            work() {
+                return 'i love working i am ' + this.name + ' ' + this.age + '岁'
+            }
+            get mawaer() {
+                console.log('hao ma')
+            }
+            set mawaer(value) {
+                console.log('i am ' + value);
+            }
+            [methodName]() {
+                return 'I am a method'
+            }
+        }
+        var lygg = new Man('LYGG', 23);
+        var mawaer = new Man('MAWAER', 24);
+        mawaer.mawaer = "mawaer"
+        mawaer.mawaer;
+        lygg.__proto__.playSSDT = function () {
+            return 'cool';
+        }
+        console.log(mawaer.playSSDT());
+        console.log(lygg.iamMethod());
+        Object.assign(Man.prototype, {
+            walk() { console.log(this.name + ' is walking') },
+            running() { console.log(this.name + ' is running') }
+        });
+
+        // var descriptor = Object.getOwnPropertyDescriptor(Man.prototype,'html');
+// <!-- 
+//         console.log('get' in descriptor);//true
+//         console.log('set' in descriptor);//true -->
+        // var arr = [1,2,3,4,5]
+        // var test = function(){return true};
+        // console.log(typeof(arr));
+        // console.log(typeof(test));
+        // console.log(lygg.hasOwnProperty('name'));//true
+        // console.log(lygg.hasOwnProperty('age'));//true
+        // console.log(lygg.hasOwnProperty('work'));//true
+        // console.log(lygg.__proto__.hasOwnProperty('work'));//true
+
+        //class 表达式
+        const Animal = class ani{
+            getAnimalName(){
+                return ani.name;
+            }
+        }
+
+        let bobi = new Animal();
+
+        //立即执行类
+        let person = new class{
+            constructor(name){
+                this.name = name;
+            }
+
+            sayName(){
+                console.log(this.name)
+            }
+        }('LY');
+        person.sayName();
+
+        //es6 class不会提升
+
+        //Generator
+
+        class Foo{
+            constructor(...args){
+                this.args = args;
+            }
+
+            *[Symbol.iterator](){
+                for(let arg of this.args){
+                    yield arg;
+                }
+            }
+        }
+
+         for(let x of new Foo('Hello','World')){
+             console.log(x);
+         }
+
+         //this指向
+         class Longer{
+             constructor(){
+                 this.printName = this.printName.bind(this);//解决方法1
+             }
+
+             printName(name = 'there'){
+                 this.print(`Hello ${name}`);
+             }
+
+             print(text){
+                 console.log(text);
+             }
+         }
+
+         const longer = new Longer();
+         const {printName} = longer;
+         printName();// TypeError: Cannot read property 'print' of undefined
+
+         //解决方法2使用箭头函数 箭头函数内的this总是指向它所在的对象
+         class Obj{
+             constructor(){
+                 this.getThis = () => this;
+             }
+         }
+
+         const myObj = new Obj();
+         myObj.getThis() === myObj; // true
+
+         //解决方法3使用proxy获取方法的时候自动绑定this
+         function selfish(target){
+             const cache = new WeakMap();
+             const handler = {
+                 get(target,key){
+                     const value = Reflect.get(target,key);
+                     if(typeof value != 'function'){
+                         return value;
+                     }
+                     if(!cache.has(value)){
+                         cache.set(value,value.bind(target));
+                     }
+                     return cache.get(value);
+                 }
+             };
+             const proxy = new Proxy(target,handler);
+             return proxy;
+         }
+
+        // const longer = selfish(new Longer());
+
+    </script>
+</body>
+
+</html>

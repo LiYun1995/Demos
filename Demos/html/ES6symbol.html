@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        const { log } = console;
+        /* ES6引入了一种新的原始数据类型Symbol，表示独一无二的值，最大的用法是用来定义对象的属性名。*/
+        //Symbol不能用new因为不是对象，可以接受一个字符串作为参数，为新创建的Symbol提供描述，用来显示控制台或者作为字符串的时候使用，便于区分。
+        let sy = Symbol('kk')
+        //console.log(sy);
+        //console.log(typeof (sy));
+
+        let sy1 = Symbol('kk')
+        sy1 === sy //false  相同参数的Symbol()返回的值不相等
+
+        /* 使用场景 */
+        //作为属性名
+        //由于每一个Symbol类型的值都不相等，所以Symbol作为对象的属性名，可以保证属性不重名。
+
+        let sy2 = Symbol('key1');
+
+        //写法1
+        let syObject = {};
+        syObject[sy2] = 'kk';
+        // console.log(syObject);//{Symbol(key1): "kk"}
+
+        //写法2
+        let syObject1 = {
+            [sy2]: 'fuck'
+        }
+        //console.log(syObject1);//{Symbol(key1): "fuck"}
+
+        //写法3
+        let syObject2 = {};
+        Object.defineProperty(syObject2, sy2, { value: 'fucku' })
+        //console.log(syObject2);
+
+        //Symbol 作为对象属性名时不能用.运算符，要用方括号。因为.运算符后面是字符串，所以取到的是字符串 sy 属性，而不是 Symbol 值 sy 属性。
+        let syObject3 = {};
+        syObject3[sy] = 'kkffff';
+
+        syObject3[sy] //'kkffff'
+        syObject3.sy //undefined
+
+        //Symbol 值作为属性名时，该属性是公有属性不是私有属性，可以在类的外部访问。但是不会出现在 for...in 、 for...of 的循环中，也不会被 Object.keys() 、 Object.getOwnPropertyNames() 返回。
+        //如果要读取到一个对象的 Symbol 属性，可以通过 Object.getOwnPropertySymbols() 和 Reflect.ownKeys() 取到。
+        let syObject4 = {};
+        syObject4[sy] = 'testtest';
+        console.log(syObject4) //{Symbol(kk): "testtest"}
+
+        for (let i in syObject4) {
+            console.log(i);
+            //无输出
+        }
+
+        Object.keys(syObject4); //[]
+        Object.getOwnPropertyNames(syObject4);//[]
+        Object.getOwnPropertySymbols(syObject4);//[Symbol(kk)]
+        Reflect.ownKeys(syObject4);//[Symbol(kk)]
+
+        /* 定义常量 */
+        //在ES5使用字符串表示常量，例如：
+        const COLOR_RED = "red";
+        const COLOR_YELLOW = "yellow";
+        const COLOR_BLUE = "blue";
+
+        //但是用字符串不能保证常量是独特的，这样会引起一些问题：
+        const MY_COLOR = "blue";
+        function getConstantName(color) {
+            switch (color) {
+                case COLOR_RED:
+                    return "COLOR_RED";
+                case COLOR_YELLOW:
+                    return "COLOR_YELLOW ";
+                case COLOR_BLUE:
+                    return "COLOR_BLUE";
+                case MY_BLUE:
+                    return "MY_BLUE";
+                default:
+                    throw new Exception(`Can't find this color`);
+            }
+        }
+        //但是使用 Symbol 定义常量，这样就可以保证这一组常量的值都不相等。用 Symbol 来修改上面的例子。
+
+        const COLOR_RED1 = Symbol('red');
+        const COLOR_YELLOW1 = Symbol('yellow');
+        const COLOR_BLUE1 = Symbol('blue');
+        const COLOR_MY1 = Symbol('blue');
+
+        function getConstantName1(color) {
+            switch (color) {
+                case COLOR_RED:
+                    return "COLOR_RED";
+                case COLOR_YELLOW:
+                    return "COLOR_YELLOW ";
+                case COLOR_BLUE:
+                    return "COLOR_BLUE";
+                default:
+                    throw new Exception(`Can't find this color`);
+            }
+        }
+
+        //Symbol.for()
+        //Symbol.for() 类似单例模式，首先会在全局搜索被登记的 Symbol 中是否有该字符串参数作为名称的 Symbol 值，如果有即返回该 Symbol 值，若没有则新建并返回一个以该字符串参数为名称的 Symbol 值，并登记在全局环境中供搜索。
+        let yellow = Symbol('Yellow');
+        let yellow1 = Symbol.for('Yellow');
+        yellow === yellow1 //false
+        let yellow2 = Symbol.for('Yellow');
+        yellow1 === yellow2 //true
+
+        //Symbol.keyFor()
+        //Symbol.keyFor()返回一个已登记的Symbol类型值的key，用来检测该字符串参数作为名称的Symbol值是否已被登记。
+        let yellow3 = Symbol.for('Yellow')
+        let blue = Symbol.for('Blue')
+        Symbol.keyFor(yellow3);//"Yellow"
+        Symbol.keyFor(blue);//"Blue"
+    </script>
+</body>
+
+</html>

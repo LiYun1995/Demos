@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/easyui.css">
+    <link rel="stylesheet" href="../css/shopping.css">
+</head>
+
+<body>
+    <div class="top">
+        <h1>shopping</h1>
+    </div>
+    <ul class="products">
+        <li>
+            <a href="#" class="item">
+                <img src="../imgs/shirt1.gif" alt="">
+                <p>Lee</p>
+                <p>price:25</p>
+            </a>
+        </li>
+        <li>
+            <a href="#" class="item">
+                <img src="../imgs/shirt2.gif" alt="">
+                <p>SMG</p>
+                <p>price:30</p>
+            </a>
+        </li>
+        <li>
+            <a href="#" class="item">
+                <img src="../imgs/shirt3.gif" alt="">
+                <p>Nike</p>
+                <p>price:15</p>
+            </a>
+        </li>
+        <li>
+            <a href="#" class="item">
+                <img src="../imgs/shirt4.gif" alt="">
+                <p>Adidas</p>
+                <p>price:35</p>
+            </a>
+        </li>
+        <li>
+            <a href="#" class="item">
+                <img src="../imgs/shirt5.gif" alt="">
+                <p>LV</p>
+                <p>price:100</p>
+            </a>
+        </li>
+        <li>
+            <a href="#" class="item">
+                <img src="../imgs/shirt6.gif" alt="">
+                <p>name</p>
+                <p>price:25</p>
+            </a>
+        </li>
+    </ul>
+
+    <div class="shopcar">
+        <h1>ShopCar</h1>
+        <table class="easyui-datagrid shopcar_tb" style="width: 300px;height:auto;">
+            <thead>
+                <tr>
+                    <th field="name" width=140>name</th>
+                    <th field="quantity" width=60>quantity</th>
+                    <th field="price" width=60>price</th>
+                </tr>
+            </thead>
+        </table>
+        <p class="total">total:0</p>
+        <h2>Drop here to add to cart</h2>
+    </div>
+
+    <script src="../jquery/jquery.min.js"></script>
+    <script src="../Easy-ui/jquery.easyui.min.js"></script>
+    <script>
+        $(function () {
+            $('.item').draggable({
+                revert:true,
+                proxy:'clone',
+                onStartDrag:function(){
+                    $(this).draggable('options').cursor = 'not-allowed';
+                    $(this).draggable('proxy').css('z-index',10);
+                },
+                onStopDrag:function(){
+                    $(this).draggable('options').cursor = 'move';
+                }
+            });
+            $('.shopcar').droppable({
+                onDragEnter:function(e,source){
+                    $(source).draggable('options').cursor = 'auto';
+                },
+                onDragLeave:function(e,source){
+                    $(source).draggable('options').cursor = 'not-allowed';
+                },
+                onDrop:function(e,source){
+                    var name = $(source).find('p:eq(0)').html();
+                    var price = $(source).find('p:eq(1)').html();
+                    console.log(name,price);
+                    addPriceItem(name,parseFloat(price.split(':')[1]));
+                }
+            })
+        });
+        var data = {
+            total:0,
+            rows:[]
+        };
+        var totalCost = 0;
+        function addPriceItem(name , price){
+            function add(){
+                for (var i=0;i<data.total;i++){
+                    var row = data.rows[i];
+                    if(row.name == name){
+                        row.quantity += 1;
+                        return;
+                    }
+                };
+                data.total += 1;
+                data.rows.push({
+                    name : name,
+                    quantity : 1,
+                    price : price
+                })
+            }
+            add();
+            totalCost += price;
+            $('.shopcar_tb').datagrid('loadData',data);
+            $('.total').html('total:'+totalCost);
+        }
+    </script>
+</body>
+
+</html>

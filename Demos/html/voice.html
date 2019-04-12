@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .voice_sli{
+            display: inline-block;
+            position: relative;
+            width: 300px;
+            height: 5px;
+            background: gray;
+        }
+        .voice_qiu{
+            display: inline-block;
+            position: absolute;
+            top: -3px;
+            left: -1px;
+            width: 10px;
+            height: 10px;
+            background: #1C86EE;
+            border-radius: 50%;
+            box-shadow: #1C86EE;
+            cursor: pointer;
+        }
+        .voice_zz{
+            height: 10px;
+            width: 0px;
+        }
+    </style>
+</head>
+<body>
+    <div class="cotent">
+        <span class="voice_pic"></span>
+        <span class="voice_sli">
+            <span class="voice_zz"></span>
+                <span class="voice_qiu"></span>
+        </span>
+     
+    </div>
+    <script src="../jquery/jquery.min.js"></script>
+    <script>
+        $(function(){
+            $('.voice_qiu').on('mousedown',function(e){
+                $('.voice_qiu').on('mousemove',function(e){
+                     console.log(e.clientX,e.offsetX,e.screenX);
+                    $('.voice_qiu').css('left',e.offsetX-1+'px');
+                })
+            });
+        })
+    </script>
+</body>
+</html>

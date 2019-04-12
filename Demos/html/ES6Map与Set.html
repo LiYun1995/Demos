@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /* Map对象 */
+        //Map对象保存键值对，任何值(对象或原始值)都可以作为一个键或一个值
+        
+        /* Map和Object的区别 */
+        //一个Object的键只能是字符串或Symbol，Map可以是任何值
+        //Map中的键值是有序的(FIFO原则),而添加到对象中的键则不是
+        //Map中键值对的个数可以通过size属性获得，而Object中的键值对只能通过手动计算获得
+        //Object都有自己的原型，原型链上的键名可能和你自己在对象上设置的键名重复
+
+        /* Map中的key */
+        //key是字符串
+
+        let myMap = new Map();
+        let keyString = 'a string';
+        myMap.set(keyString,`和键“a string”关联的值`);
+        myMap.get(keyString);//"和键“a string”关联的值"
+        myMap.get('a string');//"和键“a string”关联的值"
+        //因为keyString === 'a string'
+
+        //key是对象
+        let keyObj = {};
+        myMap.set(keyObj,`和键keyObj关联的值`);
+        myMap.get(keyObj)//"和键keyObj关联的值"
+        myMap.get({})//undefined因为keyObj !== {}
+
+        //key是函数
+        let keyFunction = function(){}
+        myMap.set(keyFunction,`和键keyFunction关联的值`);
+        myMap.get(keyFunction)//"和键keyFunction关联的值"
+        myMap.get(function(){})//undefined 因为keyFunction !== function(){}
+
+        //key是NaN
+        myMap.set(NaN,'not a number')
+        myMap.get(NaN);//"not a number"
+        let otherNaN = Number('foo')
+        myMap.get(otherNaN);//"not a number"
+        //虽然 NaN 和任何值甚至和自己都不相等(NaN !== NaN 返回true)，NaN作为Map的键来说是没有区别的。
+
+        /* Map的迭代 */
+        //对Map进行遍历，以下两个最高级：
+        //for...of
+        
+    </script>
+</body>
+</html>

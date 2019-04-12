@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../css/easyui.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="content">
+        <!-- 从已有的表格元素创建数据网格(datagrid),在html中定义列/行以及数据 -->
+        <table class="easyui-datagrid">
+            <thead>
+                <tr>
+                    <th data-options="field:'name'">Name</th>
+                    <th data-options="field:'price'">Price</th>
+                    <th data-options="field:'code'">Code</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>name1</td>
+                    <td>2323</td>
+                    <td>001</td>
+                </tr>
+                <tr>
+                    <td>name2</td>
+                    <td>23</td>
+                    <td>002</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 用javascript创建数据网格(datagrid) -->
+        <table id="dg"></table>
+    </div>
+    <script src="../jquery/jquery.min.js"></script>
+    <script src="../Easy-ui/jquery.easyui.min.js"></script>
+    <script>
+        var datalist = [{"age":"63岁","createUser":"冉秀媚","creationTime":"2019-03-07 09:49:56","id":"5e6cba574e09467a8aec6a1503dc8a44","number":"20190307090356684836","patientName":"王八","sex":"男","wareHouse":"药房"},{"age":"25岁","createUser":"冉秀媚","creationTime":"2019-03-06 14:43:36","id":"815620fec5944c3e95e2249d0103784f","number":"20190306020336143713","patientName":"温柔","sex":"女","wareHouse":"药房"},{"age":"25岁","createUser":"冉秀媚","creationTime":"2019-03-04 16:18:11","id":"a87194e5cc8b4d0482365af08b57f255","number":"20190304040311427508","patientName":"温柔","sex":"女","wareHouse":"药房"},{"age":"25岁","createUser":"冉秀媚","creationTime":"2019-03-06 14:57:05","id":"ce8775b044c944ddbc8ebf28f0ae38c7","number":"20190306020305796679","patientName":"温柔","sex":"女","wareHouse":"药房"},{"age":"63岁","createUser":"冉秀媚","creationTime":"2019-03-06 18:03:51","id":"e411a5ce7d254af0ae4ae6178abc7130","number":"20190306060351837563","patientName":"王八","sex":"男","wareHouse":"药房"}]
+        $('#dg').datagrid({
+            url:'data.json',
+            rownumbers:true,
+            fitColumns:true,
+            checkOnSelect:true,
+            singleSelect:true,
+            selectOnCheck: false,
+            pagination:true,
+            frozenColumns: [[
+                                {'field': '', checkbox: true}
+                            ]],
+            columns:[[
+	{
+		"field" : "number",
+		"title" : "退药单号"
+	},
+	{
+		"field" : "patientName",
+		"title" : "患者"
+	},
+	{
+		"field" : "sex",
+		"title" : "性别"
+	},
+	{
+		"field" : "age",
+		"title" : "年龄"
+	},
+	{
+		"field" : "createUser",
+		"title" : "退药人"
+	},
+	{
+		"field" : "creationTime",
+		"title" : "退药日期"
+	},
+	{
+		"field" : "wareHouse",
+		"title" : "退回位置"
+	}
+]],
+    
+        });
+//insertRow添加行
+// for(var i=0 ;i<datalist.length;i++){
+//     $("#dg").datagrid('insertRow',{
+//         row:datalist[i]
+//     })
+// }
+
+//loadData加载本地data
+var postData = [];
+
+  $('#dg').datagrid('loadData',datalist);
+  $('#dg').datagrid({
+      onCheck:function(rowIndex,rowData){
+          if(!postData.rowData){
+            rowData.item = rowIndex;
+            postData.push(rowData);
+          }
+        console.log(postData);
+      }
+  });
+
+  $('#dg').datagrid({
+      onUncheck:function(rowIndex,rowData){
+       for(var i=0;i<postData.length;i++){
+           if(postData[i].item===rowIndex){
+               postData.splice(i,1);
+           }
+       }
+       console.log(postData);
+      }
+  })
+
+  $('#dg').datagrid({
+      onCheckAll:function(rows){
+          postData = rows;
+          console.log(postData);
+      }
+  })
+
+  $('#dg').datagrid({
+      onUncheckAll:function(rows){
+          postData = [];
+          console.log(postData);
+      }
+  })
+    </script>
+</body>
+</html>
+

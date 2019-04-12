@@ -1,0 +1,1144 @@
+<script>
+    (function () {
+        $(".EjectMode .describe span").text("在这里门诊发药");
+        var configAddress = "http://" + $("body").attr("address");
+        var PatientValidate = new Verification();
+        $(".newInformation").css({"width": "1200px", "margin-left": "-600px"});
+        $(".common-sure").html("发药(ENTER)");
+        var userid = user.resultDomain.user.id;
+        var selectid = "";
+        let printPublic;
+        let lx1 = '';
+        let lx2 = '';
+        let lx3 = '';
+        let nowOrder;
+        let nowDetail;
+        
+        var startTimess = ''
+        var endTimess = ''
+        var disWinIdss =''
+        
+        var timer1 = setInterval(seachMessageFn,15000)
+        
+        $("#autoPrint").change(function(){
+            if($(this).is(':checked')){
+                timer1 = setInterval(seachMessageFn,15000)
+            }else {
+                clearInterval(timer1)
+            }
+        })
+        
+        $("#printer").change(function(){
+        
+            var priteNum = $(this).val();
+            
+            localStorage.setItem("priteTemp",priteNum);
+        })
+       
+        
+        
+        /*确认发药*/
+        $('.common-sure').click(function() {
+            let spId = '';
+            let spdIds = [];
+            let dispWindow = '';
+            let batchIds = [];
+            let batchIds_string = '';
+            let whIds = [];
+            let whIds_string = '';
+            let sums = [];
+            let sums_string = '';
+            if (!nowOrder) {
+                middleOperation({
+                    "name": "系统",
+                    "id": "System",
+                    "important": "classThree",
+                    "text": "[系统] 没有选择正确的发药单"
+                });
+                return;
+            }
+            // let if_FaYao = $('#recipeGive .order').datagrid('getSelections');
+            // console.log(if_FaYao)
+            // if (if_FaYao[0].status != 0) {
+            //     middleOperation({
+            //         "name": "系统",
+            //         "id": "System",
+            //         "important": "classThree",
+            //         "text": "[系统] 该药单已经发药。"
+            //     });
+            //     return
+            // }
+            /*spId参数*/
+            spId = nowOrder.spId;
+            /*spdIds参数*/
+            for (let i = 0; i < nowDetail.rows.length; i++) {
+                spdIds.push(nowDetail.rows[i].id);
+            }
+            /*dispWindow参数*/
+            // dispWindow = nowOrder.dispensingWindow;
+            dispWindow = $(".chuangKou").val()
+            /*batchIds参数*/
+            for (let i = 0; i < nowDetail.rows.length; i++) {
+                for (let x = 0; x < nowDetail.rows[i].batchAndStock.length; x++) {
+                    batchIds_string += nowDetail.rows[i].batchAndStock[x].batchId + '-';
+                }
+                batchIds_string = batchIds_string.substring(0, batchIds_string.length - 1);
+                batchIds.push(batchIds_string);
+                batchIds_string = '';
+            }
+            /*whIds参数*/
+            for (let i = 0; i < nowDetail.rows.length; i++) {
+                for (let x = 0; x < nowDetail.rows[i].batchAndStock.length; x++) {
+                    whIds_string += nowDetail.rows[i].batchAndStock[x].wareHouseId + '-';
+                }
+                whIds_string = whIds_string.substring(0, whIds_string.length - 1);
+                whIds.push(whIds_string);
+                whIds_string = '';
+            }
+            /*sums参数*/
+            for (let i = 0; i < nowDetail.rows.length; i++) {
+                for (let x = 0; x < nowDetail.rows[i].batchAndStock.length; x++) {
+                    sums_string += nowDetail.rows[i].batchAndStock[x].lockingStock + '-';
+                }
+                sums_string = sums_string.substring(0, sums_string.length - 1);
+                sums.push(sums_string);
+                sums_string = '';
+            }
+            var dispensingPeopleId = $('#peiYaoRen').combobox('getValue')
+            if(dispensingPeopleId == ""){
+                 middleOperation({
+                                "name": "系统",
+                                "id": "System",
+                                "important": "classThree",
+                                "text": "[系统] 请选择配药人" 
+                            });
+            }else{
+                $.ajax({
+                    url: configAddress + "/preOutbound/dispensing",
+                    type: 'post',
+                    async: false,
+                    traditional: true,
+                    data: {
+                        "spdIds": spdIds,
+                        "batchIds": batchIds,
+                        "whIds": whIds,
+                        "sums": sums,
+                        "spId": spId,
+                        "dispWindow": dispWindow,
+                        "dispensingPeopleId":dispensingPeopleId
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        if(data.error) {
+                            middleOperation({
+                                "name": "系统",
+                                "id": "System",
+                                "important": "classThree",
+                                "text": "[系统] " + data.message
+                            });
+                        } else
+                        {
+                            middleOperation({
+                                "name": "系统",
+                                "id": "System",
+                                "important": "classOne",
+                                "text": "[系统] " + data.message
+                            });
+                            loadOrder();
+                            // clearDetail();
+                        }
+                    }
+                })
+            }
+            
+            ;
+        })
+        
+        
+        $(".common-cancel").click(function() {
+            var ActiveID = ($(".middleTop ul .active a").attr("href")).split("_");
+            $("#" + ActiveID[1]).datagrid('reload');
+        })
+
+
+        /*（就诊卡|身份证|门诊号）失焦>>>渲染发药单*/
+        $('#recipeGive .clinicId').on('blur', function() {
+            // loadOrder();
+            clearDetail();
+        })
+        ;
+
+        /*（发药|未发药）切换>>>渲染发药单*/
+        // $('#recipeGive .chooseDispensStatus').on('change', function() {
+        //     loadOrder();
+        //     clearDetail();
+        // })
+        ;
+
+        /*时间筛选>>>渲染发药单*/
+        $('#recipeGive .form_datetime input').on('change', function() {
+            let timeStatus = timeCheckOut();
+            if (timeStatus == 2) {
+                loadOrder();
+            } else if (timeStatus == 1) {
+            } else {
+                middleOperation({
+                    "name": "系统",
+                    "id": "System",
+                    "important": "classThree",
+                    "text": "[系统] 时间格式不正确"
+                });
+            }
+            clearDetail();
+        })
+        ;
+
+        /*获取药房*/
+        get_YaoFang();
+
+        /*药房切换>>>渲染发药单*/
+        $('#recipeGive .YaoFang').on('change', function() {
+            $(".chuangKou").val("");
+            // loadOrder();
+            clearDetail();
+        });
+        /****************methods****************/
+
+        /*渲染 药房选项*/
+        function get_YaoFang() {
+            $.ajax({
+                type: 'get',
+                url: configAddress + '/stock/findWareHouseByUserId',
+                async: false,
+                dataType: 'json',
+                success: function(data) {
+                    if(data.error){
+                        middleOperation({
+                            "name": "系统",
+                            "id": "System",
+                            "important": "classThree",
+                            "text": "[系统] 未查询到药房。"
+                        });
+                    }else{
+                        let frag = document.createDocumentFragment();
+                        for (let i = 0; i < data.rows.length; i++) {
+                            let option = document.createElement('option');
+                            option.setAttribute('value', data.rows[i].id);
+                            option.innerHTML = data.rows[i].name;
+                            frag.appendChild(option);
+                        }
+                        $('#recipeGive .YaoFang').append(frag);
+                    }
+                }
+            })
+            ;
+        }
+
+        /*渲染 发药单信息 表*/
+        function loadOrder(patientCard) {
+            
+            nowOrder = '';
+            if($("#kuaChuangKou").is(":checked")){
+                 var disWinId=""
+            }else{
+                var disWinId=$('#recipeGive .chuangKou').val()
+            }
+            
+            let YaoFangId = $(".YaoFang").val();
+            let chuangKouId = $(".chuangKou").val();
+            let searchTypeId = $(".clinicId").val();
+            
+            if(YaoFangId != "" && chuangKouId != "" && searchTypeId != ""){
+                
+                $('#recipeGive .order').datagrid({
+                    // url: configAddress + "/preOutbound/findSendPills",
+                    url: configAddress + "/preOutbound/findSendPillsByPatientCard",
+                    queryParams: {
+                        startTime: $("#recipeGive .form_datetime input[name='startTime']").val(),
+                        endTime: $("#recipeGive .form_datetime input[name='endTime']").val(),
+                        // patientCard: $('#recipeGive .clinicId').val(),
+                        warehouseId: $('#recipeGive .YaoFang').val(),            //仓库ID
+                        disWinId: disWinId,                  //窗口ID
+                        patientCard:$(".clinicId").val()
+                    }
+                });
+            }
+            
+        }
+
+        /*渲染 发药单明细 表*/
+        function loadDetail(senId) {
+            $('#recipeGive .detail').datagrid({
+                url: configAddress + "/preOutbound/findSpdBySendId",
+                queryParams: {
+                    sendId: senId
+                }
+            });
+        }
+
+        /*清空 发药单明细 表*/
+        function clearDetail() {
+            $('#recipeGive .detail').datagrid('loadData', {total: 0, rows: []});
+            lx1 = '';
+            lx2 = '';
+            lx3 = '';
+        }
+
+        /*创建 发药单信息 表*/
+        function createOrder() {
+            $('#recipeGive .order').datagrid({
+                fit: true,
+                columns: [orderTable],
+                rownumbers: true,
+                fitColumns:true,
+                singleSelect: true,
+                onSelect: function(a,b) {
+                    console.log(b)
+                    clearDetail();
+                    nowOrder = b;
+                    loadDetail(b.spId);
+                    printPublic = b;
+                },
+                loadFilter: function(data){
+                    // let data_ = {rows: []};
+                    // for (let i = 0; i < data.rows.length; i++) {
+                    //     if (data.rows[i].costStutas == 1) {
+                    //         data_.rows.push(data.rows[i]);
+                    //     }
+                    // }
+                    // ;
+                    // let status0 = {rows: []};
+                    // let status1 = {rows: []};
+                    // for (let i = 0; i < data_.rows.length; i++) {
+                    //     if (data_.rows[i].status == 0) {
+                    //         status0.rows.push(data_.rows[i]);
+                    //     } else {
+                    //         status1.rows.push(data_.rows[i]);
+                    //     }
+                    // }
+                    // if ($('.chooseDispensStatus').val() == 0) {
+                    //     return status0;
+                    // } else {
+                    //     return status1;
+                    // }
+                    if(data.error == false){
+                        $("#patientName").html(data.patient.patName)
+                        $("#patientSex").html(data.patient.sex)
+                        $("#patientAge").html(data.patient.patientAge)
+                        // $("#tiZhong").css("display","block")
+                        return data.sendPillsList
+                    }
+                }
+                ,
+                onLoadSuccess: function(data){
+                    if (data.rows.length == 0) {
+                        middleOperation({
+                            "name": "系统",
+                            "id": "System",
+                            "important": "classThree",
+                            "text": "[系统] 未查询到发药单信息。"
+                        });
+                    }
+                }
+            })
+            ;
+        }
+
+        /*创建 发药单明细 表*/
+        function createDetal() {
+            $('#recipeGive .detail').datagrid({
+                fit: true,
+                columns: [detailTable],
+                rownumbers: true,
+                fitColumns: true,
+                singleSelect: true,
+                onLoadSuccess: function(data) {
+                    nowDetail = data;
+                }
+            })
+            ;
+        }
+
+        /*发药单表头*/
+        let orderTable = [
+                    {
+                        field: "preNumber",
+                        title: "处方号"
+                    },
+                    {
+                        field: "sexName",
+                        title: "剂数"
+                    },
+                    {
+                        field: "groupName",
+                        title: "开单科室"
+                    },
+                    {
+                        field: "doctorName",
+                        title: "开单医生"
+                    },
+                    {
+                        field: "diagnosis",
+                        title: "诊断",
+                        formatter: function(value, row, index){
+                            console.log(row)
+                            console.log(value)
+                            if(value){
+                                let val = ''
+                                for(var i =0;i<value.length;i++){
+                                    val += value[i].icd10Name+" "
+                                }
+                                return val
+                            }
+                            // return value.icd10Name
+                        }
+                    },
+                    {
+                        field: "money",
+                        title
+                                :
+                                "金额"
+                    },
+                    {
+                        field: "wareHouseName",
+                        title: "药房"
+                    },
+                    {
+                        field: "windowName",
+                        title
+                                :
+                                "发药窗口"
+                    },
+                    {
+                        field: "sendPillsNumber",
+                        title
+                                :
+                                "发药单编号"
+                    }
+                    // {
+                    //     field: "costStutas",
+                    //     title: "缴费状态",
+                    //     formatter: function(value, row, index)
+                    //     {
+                    //         if (value == 1)
+                    //         {
+                    //             return "已缴费";
+                    //         }
+                    //         else
+                    //         {
+                    //             return "未缴费";
+                    //         }
+                    //     }
+                    // },
+                    // {
+                    //     field: "creationTime",
+                    //     title
+                    //             :
+                    //             "开具时间"
+                    // }
+                    // ,
+                    // {
+                    //     field: "status",
+                    //     title
+                    //             :
+                    //             "发药状态",
+                    //     formatter
+                    //             :function(value, row, index)
+
+                    //     {
+                    //         if (value == 0) {
+                    //             return "未发药";
+                    //         } else {
+                    //             return "已发药";
+                    //         }
+                    //     }
+                    // }
+                    // ,
+                    // {
+                    //     field: "number",
+                    //     title
+                    //             :
+                    //             "发药单编号"
+                    // }
+                    // ,
+                    // {
+                    //     field: "allMoney",
+                    //     title
+                    //             :
+                    //             "金额"
+                    // }
+                    // ,
+                    // {
+                    //     field: "agentNumber",
+                    //     title
+                    //             :
+                    //             "剂数"
+                    // }
+                    // ,
+                    // {
+                    //     field: "isUrgent",
+                    //     title
+                    //             :
+                    //             "是否紧急",
+                    //     formatter
+                    //             :function(value, row, index)
+                    //     {
+                    //         if (value == 0) {
+                    //             return '非紧急';
+                    //         } else {
+                    //             return '紧急';
+                    //         }
+                    //     }
+                    // }
+                    // ,
+                    // {
+                    //     field: "dispensingWindow",
+                    //     title
+                    //             :
+                    //             "发药窗口"
+                    // }
+                    // ,
+                    // {
+                    //     field: "groupName",
+                    //     title
+                    //             :
+                    //             "科室"
+                    // }
+                    // ,
+                    // // {
+                    // //     field:"creationName",
+                    // //     title:"开单人"
+                    // // },
+                    // {
+                    //     field:"preNumber",
+                    //     title
+                    //             :
+                    //             "处方号"
+                    // }
+                    // ,
+                    // {
+                    //     field:'senPilUser',
+                    //     title
+                    //             :
+                    //             '发药人'
+                    // }
+                    // ,
+                    // {
+                    //     field:'senPilDate',
+                    //     title
+                    //             :
+                    //             '发药时间'
+                    // }
+                ]
+                ;
+        createOrder();
+        loadOrder();
+
+        /*发药单详情*/
+        let detailTable = [
+                    // {
+                    //     field: "status",
+                    //     title: "状态",
+                    //     formatter
+                    //             :function
+                    //             (value, row, index)
+                    //     {
+                    //         if (value == 0) {
+                    //             return "未发药";
+                    //         } else {
+                    //             return "已发药";
+                    //         }
+                    //     }
+                    // },
+                    {
+                        field: "drugName",
+                        title: "药品名称"
+                    },
+                   
+                    {
+                        field: "GuiGe",
+                        title: "规格",
+                        formatter: function(a, b)  {
+                            return b.drugStandard.name
+                        }
+                    },
+                     {
+                        field: "batchAndStockOFlockingStock",
+                        title: "数量",
+                        formatter:function (value, row, index) {
+                            if (row) {
+                                lx3 = '';
+                                for (let i = 0; i < row.batchAndStock.length; i++) {
+                                    lx3 += "<div>" + row.batchAndStock[i].lockingStock + "</div>";
+                                }
+                                return lx3;
+                            }
+                        }
+                    }
+                    ,
+                    {
+                        field: "retailPrice",
+                        title: "单价"
+                    },
+                    {
+                        field: "sumMoney",
+                        title: "金额",
+                        formatter:function(value, row, index)
+                        {
+                            return (row.number * 1000) * (row.retailPrice * 1000) / 1000000;
+                        }
+                    },
+                      {
+                        field: "number",
+                        title: "总数量"
+                    },
+                    {
+                        field: "drugUseUsage",
+                        title: "用法"
+                    },
+//                    {
+//                        field: "dose",
+//                        title: "单次剂量"
+//                    },
+                    // {
+                    //     field: "singleDosage",
+                    //     title: "单次用量"
+                    // },
+                  
+                    // {
+                    //     field: "units",
+                    //     title: "单位"
+                    // },
+                    {
+                        field: "frequencyNameANDperiodOfTreatment",
+                        title: "频次",
+                        formatter:function (value, row, index) {
+                            if (row.periodOfTreatment == undefined) {
+                                return
+                            } else {
+                                if (row.potCode) {
+                                    // return row.frequencyName + ' / ' + row.potCode + ' / ' + row.periodOfTreatment;
+                                    return row.frequencyName + ' / ' + row.potCode;
+                                } else {
+                                    return row.frequencyName + ' / ' + row.periodOfTreatment;
+                                }
+
+                            }
+                        }
+                    }
+                    ,
+                    {
+                        field: "periodOfTreatment",
+                        title: "天数"
+                    }
+                    ,
+                   
+                     {
+                        field: "validPeriod",
+                        title: "效期",
+                        formatter:function (value, row, index) {
+                            if (row) {
+                                xiaoqi = '';
+                                for (let i = 0; i < row.batchAndStock.length; i++) {
+                                    xiaoqi += "<div>" + row.batchAndStock[i].validPeriod + "</div>";
+                                }
+                                return xiaoqi;
+                            }
+                        }
+                    },
+                      {
+                        field: "brand",
+                        title: "厂家"
+                    },
+                    {
+                        field: "mark",
+                        title: "备注"
+                    },
+                    {
+                        field: "batchAndStockOFtotalStock",
+                        title: "库存",
+                        formatter:function (value, row, index) {
+                            if (row) {
+                                lx2 = '';
+                                for (let i = 0; i < row.batchAndStock.length; i++) {
+                                    lx2 += "<div>" + row.batchAndStock[i].totalStock + "</div>";
+                                }
+                                return lx2;
+                            }
+                        }
+                    },
+                     {
+                        field: "wareHouseName",
+                        title: "位置",
+                        formatter:function (value, row, index) {
+                            if (row) {
+                                weizhi = '';
+                                for (let i = 0; i < row.batchAndStock.length; i++) {
+                                    weizhi += "<div>" + row.batchAndStock[i].wareHouseName + "</div>";
+                                }
+                                return weizhi;
+                            }
+                        }
+                    },
+                     {
+                        field: "batchAndStockOFbatchNum",
+                        title: "批次",
+                        formatter:function (value, row, index) {
+                            if (row) {
+                                lx1 = '';
+                                for (let i = 0; i < row.batchAndStock.length; i++) {
+                                    lx1 += "<div>" + row.batchAndStock[i].batchNum + "</div>";
+                                }
+                                return lx1;
+                            }
+                        }
+                    },
+                ];
+        createDetal();
+
+        /*时间合法性验证*/
+        function timeCheckOut() {
+            let startTime = $('#recipeGive .form_datetime input').eq(0).val();
+            let endTime = $('#recipeGive .form_datetime input').eq(1).val();
+            let startYear = startTime.split('-')[0];
+            /*开始年*/
+            let endYear = endTime.split('-')[0];
+            /*结束年*/
+            let startMonth = startTime.split('-')[1];
+            /*开始月*/
+            let endMonth = endTime.split('-')[1];
+            /*结束月*/
+            let startDay = startTime.split('-')[2];
+            /*开始日*/
+            let endDay = endTime.split('-')[2];
+            /*结束日*/
+
+            if (startTime == '' || endTime == '') {
+                return 1;
+            }
+            if (startYear > endYear) {
+                return false;
+            } else if (startYear == endYear) {
+                if (startMonth > endMonth) {
+                    return false;
+                } else if (startMonth == endMonth) {
+                    if (startDay > endDay) {
+                        return false;
+                    } else {
+                        return 2;
+                    }
+                } else {
+                    return 2;
+                }
+            } else {
+                return 2;
+            }
+        };
+
+        //日期选择插件
+        $(".form_datetimess").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            todayBtn: true,
+            minView: 2,
+            pickerPosition: "bottom-right"
+        });
+        
+        
+        /*打印-*/
+        $('#recipeGive .print').on('click', function() {
+            let printContent = $('#recipeGive .detail').datagrid('getSelections');
+            if (printContent.length === 0) {
+                middleOperation({
+                    "name": "系统",
+                    "id": "System",
+                    "important": "classThree",
+                    "text": "[系统] 请选择打印内容"
+                })
+            } else {
+                /*赵鲲鹏！！*/
+                //   console.log(printContent)
+                //   console.log(printPublic)
+                var jiuZhenKa = "1258119367",
+                        administrativeOffice = printPublic.groupName,
+                        patientName = printPublic.patientName,
+                        patientSex = printPublic.sexName,
+                        patientAge = printPublic.patientAge,
+                        drugName = printContent[0].drugName,
+                        standard = printContent[0].drugStandard.name,
+                        drugNum = printContent[0].number,
+                        pathway = printContent[0].drugUseUsage,
+                        dosage = printContent[0].singleDosage,
+                        frequency = printContent[0].frequencyName + "/" + printContent[0].potCode + "/" + printContent[0].periodOfTreatment + "  " + printContent[0].potName,
+                        remark = ""
+                // DrugLabels(jiuZhenKa,administrativeOffice,patientName,patientSex,patientAge,drugName,standard,drugNum,pathway,dosage,frequency,remark)
+                // LODOP.PRINT()
+                $.ajax({
+                    url: configAddress + "/print/queryContentByVersion",
+                    type: "POST",
+                    data: {
+                        "printType": "药签",
+                        "version": ""
+                    },
+                    dataType: "JSON",
+                    success: function (data) {
+                        var content = data.result[0].content;
+
+                        version = data.result[0].version
+
+                        DrugLabels = function (jiuZhenKa, administrativeOffice, patientName, patientSex, patientAge, drugName, standard, drugNum, pathway, dosage, frequency, remark) {
+                            eval(content)
+                        }
+                        DrugLabels(jiuZhenKa, administrativeOffice, patientName, patientSex, patientAge, drugName, standard, drugNum, pathway, dosage, frequency, remark);
+                        LODOP.PRINT()
+                    }
+                });
+            }
+        })
+        /*=========================zhaokunpeng赵坤鹏*/
+        $(".YaoFang").change(function () {
+            let val = $(this).val();
+            // $.ajax({
+            //     type: 'get',
+            //     url: configAddress + '/sendpill/findDisWinByWareHouseId',
+            //     // async:false,
+            //     dataType: 'json',
+            //     data: {
+            //         "wareHouseId": val
+            //     },
+            //     success: function(data)  {
+            //         if(data.error)
+            //         {
+            //             middleOperation({
+            //                 "name": "系统",
+            //                 "id": "System",
+            //                 "important": "classThree",
+            //                 "text": "[系统] 未查询到。"
+            //             });
+            //         }else{
+            //             console.log(userid)
+            //             $("#startUsing").prop('checked',false)
+            //             var option = "<option>请选择</option>"
+            //             for (let i = 0; i < data.rows.length; i++) {
+            //                 if (userid == data.rows[i].userId) {
+            //                     selectid = data.rows[i].id
+            //                     option += "<option selected value=" + data.rows[i].id + ">" + data.rows[i].allotNum + "</option>"
+            //                     $("#startUsing").prop('checked',true)
+            //                 } else {
+            //                     option += "<option value=" + data.rows[i].id + ">" + data.rows[i].allotNum + "</option>"
+            //                 }
+
+            //             }
+            //             $('#recipeGive .chuangKou').html(option);
+            //             // console.log(selectid)
+                        
+            //         }
+            //     }
+            // })
+            // ;
+            WareHouseId(val)
+        })
+        var yaofangId = $(".YaoFang").val()
+        WareHouseId(yaofangId)
+        function WareHouseId(val){
+            $.ajax({
+                type: 'get',
+                url: configAddress + '/sendpill/findDisWinByWareHouseId',
+                async:false,
+                dataType: 'json',
+                data: {
+                    "wareHouseId": val
+                },
+                success: function(data)  {
+                    if(data.error)
+                    {
+                        middleOperation({
+                            "name": "系统",
+                            "id": "System",
+                            "important": "classThree",
+                            "text": "[系统] 未查询到。"
+                        });
+                    }else{
+                        console.log(userid)
+                        $("#startUsing").prop('checked',false)
+                        var option = "<option>请选择</option>"
+                        for (let i = 0; i < data.rows.length; i++) {
+                            if (userid == data.rows[i].userId) {
+                                selectid = data.rows[i].id
+                                option += "<option selected value=" + data.rows[i].id + ">" + data.rows[i].allotNum + "</option>"
+                                $("#startUsing").prop('checked',true)
+                            } else {
+                                option += "<option value=" + data.rows[i].id + ">" + data.rows[i].allotNum + "</option>"
+                            }
+
+                        }
+                        $('#recipeGive .chuangKou').html(option);
+                        
+                        disWinIdss = $('#recipeGive .chuangKou').val()
+                    }
+                }
+            })
+        }
+        $('#recipeGive .chuangKou').change(function () {
+            $("#startUsing").prop('checked',false)
+        })
+           
+        $("#startUsing").on("click",function(){
+            var disWinId = $('#recipeGive .chuangKou').val()
+            if($("#startUsing").is(':checked')){
+                $.ajax({
+                    type: 'get',
+                    url: configAddress + '/sendpill/findDisWinByUserIdAndDisWinId',
+                    // async:false,
+                    dataType: 'json',
+                    data: {
+                        "disWinId": disWinId
+                    },
+                    success: function(data)  {
+                        if(data.error == true){
+                            var con = confirm("窗口已经被："+data.message+"占用，是否强制更换")
+                            if (con == true) {
+                                $.ajax({
+                                    type: 'get',
+                                    url: configAddress + '/sendpill/updateDisWin',
+                                    // async:false,
+                                    dataType: 'json',
+                                    data: {
+                                        "disWinId": disWinId
+                                    },
+                                    success: function(data)  {
+                                        if(data.error)
+                                        {
+                                            middleOperation({
+                                                "name": "系统",
+                                                "id": "System",
+                                                "important": "classThree",
+                                                "text": "[系统] 未查询到。"
+                                            });
+                                        }
+                                        else
+                                        {
+    
+                                        }
+                                    }
+                                })
+                            } else {
+                                $('#recipeGive .chuangKou').val(selectid)
+                            }
+                        }else{
+                            $.ajax({
+                                type: 'get',
+                                url: configAddress + '/sendpill/updateDisWin',
+                                // async:false,
+                                dataType: 'json',
+                                data: {
+                                    "disWinId": disWinId
+                                },
+                                success: function(data) {
+                                    if(data.error)
+                                    {
+                                        middleOperation({
+                                            "name": "系统",
+                                            "id": "System",
+                                            "important": "classThree",
+                                            "text": "[系统] 未查询到。"
+                                        });
+                                    }
+                                    else
+                                    {
+                                        console.log(data)
+                                    }
+                                }
+                            })
+                        }
+                    }
+                })
+            }else{
+                
+            }            
+        })
+           
+        // })
+        $(".clinicId").blur(function(){
+            loadOrder()
+        })
+        $(".YaoFang").change(function(){
+            loadOrder()
+        })
+         $(".chuangKou").change(function(){
+            loadOrder()
+        })
+        
+        $("#peiYaoRen").combobox({
+            url:configAddress + '/user/findUserByWarehouseId',
+            heigth:18,
+            valueField:'userId',
+            textField:'userName',
+            queryParams:{
+                "warehouseId":$(".YaoFang").val()
+            },
+            loadFilter:function(data){
+                if(data.error == false){
+                    return data.userList
+                }
+            }
+        });
+        $("#kuaChuangKou").on("click",function(){
+            if($(this).is(":checked")){
+                var disWinId=""
+                let YaoFangId = $(".YaoFang").val();
+                let chuangKouId = $(".chuangKou").val();
+                let searchTypeId = $(".clinicId").val();
+                
+                disWinIdss = ''
+                
+                HouseAndDisWinId();
+                
+                if(YaoFangId != "" && chuangKouId != "" && searchTypeId != ""){
+                    $('#recipeGive .order').datagrid({
+                        // url: configAddress + "/preOutbound/findSendPills",
+                        url: configAddress + "/preOutbound/findSendPillsByPatientCard",
+                        queryParams: {
+                            startTime: $("#recipeGive .form_datetime input[name='startTime']").val(),
+                            endTime: $("#recipeGive .form_datetime input[name='endTime']").val(),
+                            // patientCard: $('#recipeGive .clinicId').val(),
+                            warehouseId: $('#recipeGive .YaoFang').val(),            //仓库ID
+                            disWinId: disWinId,                  //窗口ID
+                            patientCard:$(".clinicId").val()
+                        }
+                    });
+                }
+            }else{
+                if($("#startUsing").is(":checked")){
+                    var disWinId=$('#recipeGive .chuangKou').val()
+                    let YaoFangId = $(".YaoFang").val();
+                    let chuangKouId = $(".chuangKou").val();
+                    let searchTypeId = $(".clinicId").val();
+                    
+                    disWinIdss = $('#recipeGive .chuangKou').val()
+                    HouseAndDisWinId();
+                    
+                    if(YaoFangId != "" && chuangKouId != "" && searchTypeId != ""){
+                        $('#recipeGive .order').datagrid({
+                            // url: configAddress + "/preOutbound/findSendPills",
+                            url: configAddress + "/preOutbound/findSendPillsByPatientCard",
+                            queryParams: {
+                                startTime: $("#recipeGive .form_datetime input[name='startTime']").val(),
+                                endTime: $("#recipeGive .form_datetime input[name='endTime']").val(),
+                                // patientCard: $('#recipeGive .clinicId').val(),
+                                warehouseId: $('#recipeGive .YaoFang').val(),            //仓库ID
+                                disWinId: disWinId,                  //窗口ID
+                                patientCard:$(".clinicId").val()
+                            }
+                        });
+                    }
+                }
+            }
+        })
+        var nowTime = ''
+        $.ajax({
+            type: 'post',
+            url: configAddress + '/config/getNewDate',
+            async:false,
+            dataType: 'json',
+            success: function(data) {
+                if(data.error)
+                {
+                    middleOperation({
+                        "name": "系统",
+                        "id": "System",
+                        "important": "classThree",
+                        "text": "[系统] 未查询到。"
+                    });
+                }else{
+                    nowTime = data.date.split(" ")[0]
+                    // console.log(nowTime)
+                    $("input[name='startTime']").val(nowTime)
+                    $("input[name='endTime']").val(nowTime)
+                    
+                    startTimess = $("input[name='startTime']").val()
+                    
+                    endTimess = $("input[name='endTime']").val()
+                   
+                }
+            }
+        })
+        
+        HouseAndDisWinId()
+        function HouseAndDisWinId(){
+        
+            startTimess = $("input[name='startTime']").val()
+            
+            endTimess = $("input[name='endTime']").val()
+            
+            $(".medicinePatient").datagrid({
+                url: configAddress +'/sendpill/findPatByWareHouseAndDisWinId',
+                height:525,
+                rownumbers: true,
+                fitColumns:true,
+                singleSelect: true,
+                queryParams: {
+                    startTime: startTimess,
+                    endTime: endTimess,
+                    wareHouseId: $('.YaoFang').val(),            //仓库ID
+                    disWinId: disWinIdss               //窗口ID
+                },
+                columns:[[
+            		{field:'patientName',title:'姓名'},
+            		{field:'patientSex',title:'性别'},
+            		{field:'patientAge',title:'年龄'}
+                ]],
+                loadFilter: function(data){
+                    if(data.error == false){
+                        return data.patientList
+                    }
+                },
+                onSelect: function(rowIndex, rowData){
+                    // console.log(rowData)
+                    $(".clinicId").val(rowData.patientCardNumber);
+                    loadOrder(rowData.patientCardNumber)
+                },
+            });
+        }
+        
+        
+        $(".datagridChange").change(function(){         
+        
+            HouseAndDisWinId()
+           
+        })
+        
+        
+        
+        var LODOP;
+        
+        getPrinterCount();
+        
+        function getPrinterCount(){
+        
+            console.log(localStorage.getItem("priteTemp"))
+            
+            LODOP = getLodop();
+            
+            var geshu = LODOP.GET_PRINTER_COUNT();
+            
+            var daYinOPtion = "<option value=''>请选择打印机</option>";
+            
+            for(let a = 0;a < geshu; a++){
+                
+            
+                if(LODOP.GET_PRINTER_NAME(a) == localStorage.getItem("priteTemp")){
+                    daYinOPtion += "<option selected value='"+LODOP.GET_PRINTER_NAME(a)+"'>"+LODOP.GET_PRINTER_NAME(a)+"</option>";
+                }else{
+                    daYinOPtion += "<option value='"+LODOP.GET_PRINTER_NAME(a)+"'>"+LODOP.GET_PRINTER_NAME(a)+"</option>";
+                }
+                
+                
+            }
+             $("#printer").html(daYinOPtion)
+        }
+    })();
+
+
+</script>
