@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        /* ES6 class类 */
+        /* 概述 
+            在ES6中，class作为对象的模板被引入，可以通过class关键字定义类。
+            class的本质是function.
+            它可以看作一个语法糖，让对象原型的写法更加清晰，更像面向对象编程的语法。
+        */
+
+        /* 基础用法 */
+        //类定义
+        //类表达式可以为匿名或命名
+        //匿名类
+        let example = class {
+            constructor(a) {
+                this.a = a;
+            }
+        }
+        //命名类
+        let example1 = class example1 {
+            constructor(a) {
+                this.a = a;
+            }
+        }
+
+        //类声明
+        class example2 {
+            constructor(a) {
+                this.a = a;
+            }
+        }//不可重复声明
+
+        /* 注意要点：
+            类定义不会被提升。
+            类中方法不需要function关键字。
+            方法见不能加分号。
+         */
+
+        /* 类的主体 */
+        //属性
+        //prototype
+        //ES6中，prototype依旧存在，虽然可以直接自类中定义方法，但是其实方法还是定义在prototype上的。覆盖方法/初始化时添加方法
+        example.prototype = {
+            //methods
+        }
+        //添加方法
+        Object.assign(example.prototype, {
+            //methods
+        })
+        //静态属性：class本身的属性，即直接定义在类内部的属性(Class.propname),不需要实例化。ES6中规定，Class内部只有静态方法，没有静态属性。
+        class example3 {
+            //新提案
+            static a = 2;
+        }
+        //目前可行写法
+        example3.b = 2;
+        //公共属性
+        example3.prototype.c = 3;
+        //实例属性：定义在实例对象（this）上的属性
+        class example4 {
+            a = 1;
+            constructor(){
+                console.log(this.a);
+            }
+        }
+    </script>
+</body>
+
+</html>
