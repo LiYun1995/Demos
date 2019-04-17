@@ -1,0 +1,301 @@
+<script>
+
+    (function () {
+        $(".EjectMode .describe span").text("借阅登记");
+        var configAddress = "http://" + $("body").attr("address");
+        $(".newInformation").css({ "width": "700px" });
+        $('.textbox ').css({'margin-left':'0px'},{'width':'400px'});
+        var activeID = $(".middleTop .active a").attr("href");
+        activeID = activeID.split("_");
+        var row = $("#" + activeID[1]).datagrid('getChecked')[0];
+        let wgid = "",cId = '',mrId = '';
+        toComboGrid();
+        addCode();// 取消确定的enter事件
+        $('#maininfo_operator').text(user.resultDomain.user.name);
+        $('#maininfo_coptime').text(SystemTime(1));
+        // 归还日期
+        $("#JYDJ-guiHuanDate").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            todayBtn: false,
+            minView: 2
+        });
+        $("#JYDJ-guiHuanDate").datetimepicker("setStartDate",SystemTime(1))
+        //document绑定事件
+        function addCode () {
+            $(document).off("keyup");
+            $(document).keyup(function(event) {
+                switch(event.keyCode) {
+                    case 27:$(".EjectMode").remove();
+                    // case 108:$(".common-sure").click();
+                    // case 13:$(".common-sure").click();
+                }
+            });
+        };
+        if (row) {
+            mrId = row.mrpcId;
+            initInDet(row.patientId);// 详情下拉
+            $("#case_num").combogrid('setText', row.medicalRecId);
+            $("#case_num").combogrid('setValue',row.medicalRecId);
+            $.ajax({ //患者信息回显
+                type: "post", //post提交方式默认是get
+                url: configAddress + "/mraBorrowed/queryPatByChildId",
+                data: {
+                    "clinicId": row.clinicId,
+                    "userId": user.resultDomain.user.id
+                },
+                dataType: "json",
+                success: function (data) {
+                    if (data.error == false && data.patMap) {
+                        $("#info_name").html(data.patMap.patname || '');
+                        $("#info_name").attr("title",data.patMap.patname || '');
+                        $("#ca_sex").html(data.patMap.sex || '');
+                        $("#ca_age").html(data.patMap.age || '');
+                        $("#ca_idnum").html(data.patMap.documentnum || '');
+                    } else {
+                        middleOperation({
+                            "name": "系统",
+                            "id": "System",
+                            "important": "classThree",
+                            "text": "[系统]借阅登记: 查询患者数据异常"
+                        });
+                    }
+                }
+            })
+        }
+
+        // 初始化病案号模糊查询
+        function toComboGrid() {
+            $("#case_num").combogrid({
+                prompt: '输入患者姓名或者病案号',
+                panelWidth: 500,
+                height: 30,
+                required: true,
+                mode: 'remote',
+                url: configAddress + "/mraPageCopy/queryPatByCon",
+                idField: 'mrNum',
+                textField: 'mrNum',
+                editable: true,
+                hasDownArrow: false,
+                onBeforeLoad: function (param) {
+                    var value = $("#case_num").combogrid('getValue');
+                    if (value != null && value != undefined && value != '') {
+                        param.condition = value;
+                        return true;
+                    } else {
+                        $("#case_num").combogrid('hidePanel');
+                        return false;
+                    }
+                },
+                loadFilter: function (data) {
+                    if (data.error == false) {
+                        return data.patList;
+                    } else {
+                        return []
+                    }
+                },
+                onSelect: function (rowIndex, rowData) {
+                    mrId = rowData.mrpcId;
+                    $("#case_num").combogrid('setText', rowData.mrNum);
+                    $("#case_num").combogrid('setValue',rowData.mrNum);
+                    initInDet(rowData.patientId)
+                    $('#info_name').text(rowData.name || '');
+                    $("#info_name").attr("title",rowData.name || '');
+                    $('#ca_sex').text(rowData.sex);
+                    $('#ca_age').text(rowData.age);
+                    $('#ca_idnum').text(rowData.cardNum);
+
+                },
+                columns: [[
+                    { field: 'name', title: '姓名', width: 100, sortable: 'true' },
+                    { field: 'mrNum', title: '病案号', width: 100, sortable: 'true' },
+                    { field: 'sex', title: '性别', width: 100, sortable: 'true' },
+                    { field: 'age', title: '年龄', width: 100, sortable: 'true' },
+                    { field: 'hospitalizationNum', title: '住院次数', width: 100, sortable: 'true' },
+                    { field: 'patientId', title: '', width: 0, sortable: 'true' },
+                    { field: 'cardNum', title: '', width: 0, sortable: 'true' },
+                ]]
+            });
+        }
+        //历史住院详情请求
+        function initInDet (pid) {
+            $.ajax({
+                type: "POST",
+                url: configAddress + "/mraPageCopy/queryHistoryByPatId",
+                data: {
+                    'patientId': pid
+                },
+                success: function (msg) {
+                    var data = JSON.parse(msg).pats;
+                    var html = '';
+                    for (var i = 0, l = data.length; i < l; i++) {
+                        var valueText = ' '+ (data[i].describe || '')+' ('+(data[i].outTime || '')+'出院) '+' ['+(data[i].diagnosisName || '')+']'
+                        html += '<option data-id="'+ (data[i].mrpcId || '') +'" value="' + data[i].clinicId + '">' + valueText + '</option>';
+                    }
+                    $("#case_times").html(html);
+                }
+            });
+        }
+        buMen();
+        jieYueRen(" ");
+        function buMen() { // 借阅部门
+            $("#jieYueDengJi-bumen").combobox({
+                url:configAddress + "/mraBorrowed/queryByPId",
+                valueField:'wgid',
+                textField:'wgname',
+                height:24,
+                queryParams:{
+                    "parentId":"a25785cadcd745849de0349f789ebb57"
+                },
+                loadFilter:function(data){
+                    return data.wglist
+                },
+                onSelect:function(record){
+                    wgid = record.wgid
+                    jieYueRen(wgid);
+                }
+
+            });
+        }
+        function jieYueRen(wgid) { // 借阅人
+            $("#jieYueDengJi-name").combogrid({
+                panelWidth: 140,
+                required:true,
+                height:24,
+                mode:'remote',
+                url:configAddress + "/mraBorrowed/getUserByWgId",
+                idField:'userid',
+                textField:'name',
+                editable:true,
+                hasDownArrow:true,
+                queryParams:{
+                    wgId:wgid,
+                    features:""
+                },
+                onBeforeLoad: function(param) {
+                    var value = $("#jieYueDengJi-name").combogrid('getValue');
+                    if(value!=null && value!=undefined && value!='') {
+                        param.features = value;
+                        return true;
+                    }else{
+                        $("#jieYueDengJi-name").combogrid('hidePanel');
+                        return false;
+                    }
+                },
+                loadFilter:function(data) {
+                    if (data.error == false) {
+                        return data.result;
+                    }else{
+                        return []
+                    }
+                },
+                columns: [
+                    [
+                        {field: 'name',title: '名称',width: 100,sortable: 'true'}
+                    ]
+                ]
+            });
+        }
+        $(".newFoot .newInform-sure").on("click",function () {
+            cId = $("#case_times").val();
+            mrId = $("#case_times").find("option:checked").attr("data-id");
+            var jieyueren = $("#jieYueDengJi-name").combogrid("getValue");       //借阅人的值
+            var lianxifangshi = $("#copav_fun").val();       //联系方式
+            var shiyou = $("#jieyueShiYou").val();              //借阅事由
+            var caiLiao = $("#cailiao").val();             //证明材料
+            var jiechudate = $("#maininfo_coptime").html();      //借出时间
+            var guihuandate = $("#JYDJ-guiHuanDate").val();       //预备归还时间
+            if(!cId || !mrId) {
+                middleOperation({
+                    "name": "系统",
+                    "id": "System",
+                    "important": "classTwo",
+                    "text": "借阅登记: 请先选择一条病案"
+                });
+                return -1;
+            }
+            if(!jieyueren) {
+                middleOperation({
+                    "name": "系统",
+                    "id": "System",
+                    "important": "classTwo",
+                    "text": "借阅登记: 请选择借阅人"
+                });
+                return -1;
+            }
+            if(!lianxifangshi) {
+                middleOperation({
+                    "name": "系统",
+                    "id": "System",
+                    "important": "classTwo",
+                    "text": "借阅登记: 借阅登记: 请填写借阅人联系方式"
+                });
+                return -1;
+            }
+            if(shiyou == "") {
+                middleOperation({
+                    "name": "系统",
+                    "id": "System",
+                    "important": "classTwo",
+                    "text": "借阅登记: 请填写借阅事由"
+                });
+                return -1;
+            }
+            if(caiLiao == "") {
+                middleOperation({
+                    "name": "系统",
+                    "id": "System",
+                    "important": "classTwo",
+                    "text": "借阅登记: 请填写证明材料"
+                });
+                return -1;
+            }
+            if(guihuandate == "") {
+                middleOperation({
+                    "name": "系统",
+                    "id": "System",
+                    "important": "classTwo",
+                    "text": "借阅登记: 请选择预还日期"
+                });
+                return -1;
+            }
+            $.ajax({
+                dataType: "json",
+                type: "post", //post提交方式默认是get
+                url: configAddress + "/mraBorrowed/saveMraBorrowing",
+                data: {
+                    "wgId":wgid,
+                    "borrowerUser":jieyueren,
+                    "mrPageCopyId":mrId,
+                    "contact":lianxifangshi,
+                    "cause":shiyou,
+                    "prove":caiLiao,
+                    "borrowerTime":jiechudate,
+                    "stillTime":guihuandate,
+                    "clinicId":cId,
+                    "lenduserId":user.resultDomain.user.id
+                },
+                success: function (data) {
+                    if(data.error == false) {
+                        middleOperation({
+                            "name": "系统",
+                            "id": "System",
+                            "important": "classOne",
+                            "text":  data.message
+                        });
+                        $("#" + activeID[1]).datagrid('reload');
+                    }else {
+                        middleOperation({
+                            "name": "系统",
+                            "id": "System",
+                            "important": "classThree",
+                            "text":  data.message
+                        });
+                    }
+                }
+            })
+        })
+    })()
+
+</script>

@@ -69,10 +69,110 @@
         //实例属性：定义在实例对象（this）上的属性
         class example4 {
             a = 1;
-            constructor(){
+            constructor() {
                 console.log(this.a);
             }
         }
+        /* name属性  返回跟在class后的类名(存在时) */
+        let example5 = class example6 {
+            constructor(a) {
+                this.a = a;
+            }
+        }
+        console.log(example5.name)
+
+        let example7 = class {
+            constructor(a) {
+                this.a = a;
+            }
+        }
+        console.log(example7.name)
+
+        /* 方法 */
+        //constructor
+        //constructor是类的默认方法，创建类的实例化对象时调用
+        class example8 {
+            constructor(){
+                console.log("I am constructor")
+            }
+        }
+        let testOBJ = new example8();
+
+        //返回对象
+        console.log(testOBJ instanceof example8);
+        //返回指定对象
+        class example9 {
+            constructor(){
+                return new example8();
+            }
+        }
+        console.log(new example9 instanceof example9);//false
+
+        //静态方法
+        class example10 {
+            static sum(a,b){
+                console.log(a+b);
+            }
+        }
+        example10.sum(1,2);
+
+        //原型方法
+        class example11{
+            sum(a,b){
+                console.log(a+b)
+            }
+        }
+        let testOBJ1 = new example11
+        testOBJ1.sum(2,3);
+
+        //实例方法
+        class example12{
+            constructor(){
+                this.sum = (a,b) => {
+                    console.log(a+b);
+                }
+            }
+        }
+        let testOBJ2 = new example12;
+        testOBJ2.sum(2,3)
+
+        /* 类的实例化 */
+        //let testOBJ2 = new example12;
+
+        //实例化对象
+        //共享原型对象
+
+        class example13 {
+            constructor(a,b){
+                this.a=a;
+                this.b=b;
+            }
+            sum(){
+                return this.a +this.b;
+            }
+        }
+
+        let testOBJ3 = new example13(5,2);
+        let testOBJ4 = new example13(2,1);
+        console.log(testOBJ3.__proto__ === testOBJ4.__proto__);
+        testOBJ3.__proto__.sub = function(){
+            return this.a - this.b;
+        }
+        console.log(testOBJ3.sub());
+        console.log(testOBJ4.sub());
+
+        //decorator
+        //decorator是一个函数，用来修改类的行为，在代码编译时产生作用
+        //类修饰
+        //一个参数
+        //第一个参数target，指向类本身
+        function testAble(target){
+            target.isTestAble = true;
+        }
+
+        @testAble 
+        class example14 {}
+       console.log(example14.isTestAble) ;
     </script>
 </body>
 
