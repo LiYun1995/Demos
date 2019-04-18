@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        const { log } = console;
+        //数组创建
+        //Array.of()
+        //将参数中所有值作为元素形成数组。
+        console.log(Array.of(1, 2, 3, 4, 5));// [1, 2, 3, 4,5]
+        //参数值可为不同类型
+        console.log(Array.of(1, 2, true));// [1, '2', true]
+        // 参数为空时返回空数组
+        console.log(Array.of()); // []
+
+        //Array.from()
+        //将类数组对象或可迭代对象转化为数组
+        //参数为数组，返回与原数组一样的数组
+        log(Array.from([1, 2])); //(2) [1, 2]
+        //参数含空位
+        log(Array.from([1, , 3])); //(3) [1, undefined, 3]
+
+        //参数
+        //Array.from(arrayLike[,mapFn[,thisArg]])
+        //返回值为转换后的数组
+        //arryLike 想要转换的类数组对象或可迭代对象。
+        log(Array.from([1, 2, 3])); //(3) [1, 2, 3]
+        //mapFn 可选，map函数，用于对每个元素进行处理，放入数组的是处理后的元素
+        log(Array.from([1, 2, 3], n => n * 2));//(3) [2, 4, 6]
+        //thisArg 可选，用于指定map函数执行时的this对象。
+        let map = {
+            do(n) {
+                return n * 2;
+            }
+        }
+        log(Array.from([1, 2, 3], function (n) { return this.do(n) }, map));//(3) [2, 4, 6]
+
+        /* 类数组对象 */
+        //一个类数组对象必须含有length属性，且元素属性名必须是数值或可转换为数值的字符。
+
+        let arr = Array.from({
+            0: '1',
+            1: '2',
+            2: '3',
+            length: 3
+        })
+
+        log(arr);//(3) ["1", "2", "3"]
+        //没有length属性则返回空数组
+        let arr1 = Array.from({
+            0: '1',
+            1: '2',
+            2: '3'
+        })
+        log(arr1);//[]
+
+        //元素属性名不为数值且无法转化为数值，返回长度为length，值为undefined的数组
+        let arr2 = Array.from({
+            a: 1,
+            b: 2,
+            c: 3,
+            length: 3
+        });
+        log(arr2);//(3) [undefined, undefined, undefined]
+
+        //转换可迭代对象
+        //转换map
+        let map1 = new Map()
+        map1.set('key0', 'value1')
+        map1.set('key1', 'value2')
+        log(Array.from(map1)) //(2) [Array(2), Array(2)]
+
+        //转换set
+        let arr3 = [2, 4, 5]
+        let set1 = new Set(arr3)
+        log(Array.from(set1))//(3) [2, 4, 5]
+
+        //转换字符串
+        let str = 'MawaerCG'
+        log(Array.from(str)) //(8) ["M", "a", "w", "a", "e", "r", "C", "G"]
+
+        /* 扩展的方法 */
+        //查找
+        //find()
+        //查找数组中符合条件的元素，若有多个符合条件的元素，则返回第一个元素。
+        let arr4 = Array.of(1, 2, 3, 4, 5);
+        log(arr4.find(item => item > 2)); //3
+        // 数组空位处理为 undefined
+        console.log([, 1].find(n => true)); // undefined
+
+        //findIndex()
+        //查找数组中符合条件的元素索引，若有多个符合条件的元素，则返回第一个。
+        //参数1：回调函数
+        //参数2(可选)：指定回调函数中的this值
+        log(arr4.findIndex(item => item === 3)); //2
+        // 数组空位处理为 undefined
+        console.log([, 1].findIndex(n => true)); //0
+
+        //填充
+        //fill()
+        //将一定范围索引的数组元素内容填充为单个指定的值。
+        //参数1：用来填充的值
+        //参数2：被填充的起始索引
+        //参数3（可选）：被填充的结束索引，默认为数组末尾
+        log([1,3,4].fill(0,0,1));//(3) [0, 3, 4]
+
+        //copyWithin()
+        //将一定范围索引的数组元素修改为此数组另一指定范围索引的元素
+        //参数1：被修改的起始索引
+        //参数2：被用来覆盖的数据起始索引
+        //参数3（可选）：被用来覆盖的数据的结束索引，默认为数组的末尾
+        log([1,2,3,8,6,4].copyWithin(0,3,6));
+        //参数1为负数表示倒数
+        log([1,2,3,8,6,4].copyWithin(-2,0));
+
+        /* 遍历 */
+        //entries()
+        //遍历键值对
+        for()
+    </script>
+</body>
+
+</html>
