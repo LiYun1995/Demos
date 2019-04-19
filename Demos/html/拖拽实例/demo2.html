@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../../css/jquery-ui.min.css">
+    <title>Document</title>
+    <style>
+        #content{
+            width: 500px;
+            height: 500px;
+            border: 1px solid black;
+        }
+        #content span{
+            display: inline-block;
+            width: 200px;
+            height: 50px;
+            background: gray;
+            margin:10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <span>item 1</span>
+        <span>item 2</span>
+        <span>item 3</span>
+        <span>item 4</span>
+        <span>item 5</span>
+        <span>item 6</span>
+    </div>
+    <script src="../../jquery/jquery.min.js"></script>
+    <script src="../../jquery-ui/jquery-ui.min.js"></script>
+    <script>
+        $(function(){
+            console.log(1);
+            $('#content').sortable()
+        })
+    </script>
+</body>
+</html>
