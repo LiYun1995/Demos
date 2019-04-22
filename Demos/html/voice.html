@@ -1,55 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
     <title>Document</title>
     <style>
-        .voice_sli{
-            display: inline-block;
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        .demo {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .voice_container {
+            width: 350px;
+            height: 100px;
+            background: #141315;
+            color: #FFFFFF;
+            font-size: 18px;
+        }
+
+        .voice_container p {
+            width: 100%;
+            height: 20px;
+        }
+
+        .voice_mian {
+            width: 100%;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             position: relative;
-            width: 300px;
-            height: 5px;
-            background: gray;
         }
-        .voice_qiu{
+        .voice_mian i{
             display: inline-block;
-            position: absolute;
-            top: -3px;
-            left: -1px;
-            width: 10px;
-            height: 10px;
-            background: #1C86EE;
-            border-radius: 50%;
-            box-shadow: #1C86EE;
-            cursor: pointer;
+            width: 15%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        .voice_zz{
-            height: 10px;
-            width: 0px;
+        .voice_mian font{
+            display: inline-block;
+            width: 15%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .voice_btn {
+            width: 5px;
+            height: 15px;
+            border-radius: 3px;
+            background: #007ACC;
+            position: absolute;
+            left: 15%;
+        }
+
+        .main_bottom {
+            width: 70%;
+            height: 2px;
+            background: #FFFFFF;
+        }
+
+        .main_body {
+            background: #069BFF;
         }
     </style>
 </head>
+
 <body>
-    <div class="cotent">
-        <span class="voice_pic"></span>
-        <span class="voice_sli">
-            <span class="voice_zz"></span>
-                <span class="voice_qiu"></span>
-        </span>
-     
+    <div class="demo">
+        <div class="voice_container">
+            <p>调节音量：</p>
+            <div class="voice_mian">
+                <i class="el-icon-service"></i>
+                <div class="voice_btn"></div>
+                <div class="main_bottom">
+                    <div class="main_body"></div>
+                </div>
+                <font>12</font>
+            </div>
+        </div>
     </div>
     <script src="../jquery/jquery.min.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
     <script>
-        $(function(){
-            $('.voice_qiu').on('mousedown',function(e){
-                $('.voice_qiu').on('mousemove',function(e){
-                     console.log(e.clientX,e.offsetX,e.screenX);
-                    $('.voice_qiu').css('left',e.offsetX-1+'px');
-                })
-            });
+        $(function () {
+            console.log(11);
         })
     </script>
 </body>
+
 </html>
