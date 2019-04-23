@@ -1,0 +1,114 @@
+{
+	"configToolDefault" : {
+		"工具栏" : [
+			{
+				"text" : "新增",
+				"url" : "save"
+			},
+			{
+				"text" : "查看",
+				"url" : "queryById"
+			},
+			{
+				"text" : "修改",
+				"url" : "update"
+			}
+		]
+	},
+	"subjectData" : "\n<div class=\"EjectMode\">\n         <div class=\"mainConfigure\">\n        <div class=\"configure-top\"><span class=\"item\">×</span></div>\n        <div class=\"configure-content\">\n            <div class=\"confTool\">\n                <ul>\n                    <li><a href=\"#SetToolbar\">工具栏</a></li>\n                    <li><a href=\"#LeftKey\">鼠标左键</a></li>\n                    <li><a href=\"#RightKey\">鼠标右键</a></li>\n                </ul>\n                <div class=\"Config-operation\">\n                    <ul>\n                        <li class=\"add-config\"><img src=\"assest/img/edit_add.png\" alt=\"\"><span>新增</span></li>\n                        <li class=\"delete-config\"><img src=\"assest/img/edit_remove.png\" alt=\"\"><span>删除</span></li>\n                        <li class=\"up-config\"><img src=\"assest/img/edit_remove.png\" alt=\"\"><span>上移</span></li>\n                        <li class=\"down-config\"><img src=\"assest/img/edit_remove.png\" alt=\"\"><span>下移</span></li>\n                    </ul>\n                </div>\n                <div class=\"Config-table-Content\" id=\"SetToolbar\">\n                    <table>\n                        <thead>\n                            <tr>\n                                <th></th>\n                                <th>名称</th>\n                                <th>自定义名称</th>\n                                <th>快捷键</th>\n                            </tr>\n                        </thead>\n                        <tbody></tbody>\n                    </table>\n\n                </div>\n                <div id=\"LeftKey\">\n                    <p></p>\n                </div>\n                <div id=\"RightKey\">\n                    <p></p>\n                </div>\n            </div>\n        </div>\n        <div class=\"configure-foot\">\n            <div class=\"placeholder\"></div>\n            <div class=\"configure-foot-button\">\n                <a>确定</a>\n            </div>\n        </div>\n    </div>\n    </div>\n\n\n\n        <script class=\"EjectMode\">\n            $(\".confTool\").tabs();\n            if (globalData.config != \"\") {\n                $.each(globalData.config.operationText.configTool, function (index, obj) {\n                    configAddTr();\n                    $(\".Config-table-Content tr:last-child option[data-url=\" + obj.url + \"]\").prop(\"selected\", \"selected\");\n\n                    if (obj.custom && obj.custom != \"\") {\n                        $(\".Config-table-Content tr:last-child .toolCustomName\").val(obj.custom)\n                    }\n\n                    $(\".Config-table-Content tr:last-child .ConfigToolSet\").val(obj.key).attr(\"key\", obj.keyCode);\n                });\n            }\n\n\n            $(\".Config-table-Content tbody \").on(\"click\", \"tr\", function () {\n                $(this).siblings().removeClass(\"active\");\n                $(this).addClass(\"active\");\n            });\n\n            $(\".configure-top .item\").click(function () {\n                $(\".EjectMode\").remove();\n            });\n\n            $(\".Config-operation .delete-config\").click(function () {\n                var activeLength = $(\".Config-table-Content .active\");\n                if (activeLength.length == 0) {\n                    middleOperation({\n                        \"name\": \"系统\",\n                        \"id\": \"system\",\n                        \"important\":\"classOne\",\n                        \"text\": \"[系统] 新增: 没有选中数据\"\n                    });\n\n                } else {\n                    $(activeLength).remove();\n                }\n                configFun.sort()\n            });\n\n            $(\".Config-operation .up-config\").click(function () {\n                configFun.ConfigRemoveNUM(\"up\")\n            });\n\n            $(\".Config-operation .down-config\").click(function () {\n                configFun.ConfigRemoveNUM(\"down\")\n            });\n\n            $(\".Config-operation .add-config\").click(function () {\n                configAddTr();\n            });\n\n            $(\".configure-foot-button a\").click(function () {\n                var activeID = $(\".confTool .ui-state-active a\").attr(\"href\");\n                differObject(activeID)\n            });\n\n            // 保存提交数据\n            function differObject(diff) {\n                var configData = [];\n                // 是工具栏还是左右键\n                if (diff ==\"#\") {\n\n                } else if (diff == \"#SetToolbar\") {\n                    var text;\n                    $(\".Config-table-Content tbody tr\").each(function () {\n                        var inputVal = $(this).find(\".toolCustomName\").val();\n                        var selectVal = $(this).find(\".configToolName\").val();\n                        var key = ($(this).find(\".ConfigToolSet\").val()).toUpperCase();\n                        var SetId = $(this).find(\"option:selected\").attr(\"data-url\");\n                        var code = $(this).find(\".ConfigToolSet\").attr(\"key\");\n                        if (inputVal != \"\" || selectVal != \"\") {\n                            text = inputVal || selectVal;\n                            configData.push({text: text, custom: inputVal, \"keyCode\": code, key: key, url: SetId});\n                        }\n\n                    });\n                }\n\n                globalData.config.operationText.configTool = configData;\n                var activeID = $(\".middleTop .active a\").attr(\"href\");\n                activeID = activeID.split(\"_\");\n                var configAddress=\"http://\"+$(\"body\").attr(\"address\");\n                $.ajax({\n                    type: \"post\",\n                    url:  configAddress+\"/config/updateByFunctionId\",\n                    data: {\"functionId\": activeID[1], \"content\": JSON.stringify({content: globalData.config})},\n                    dataType: \"json\",\n                    success: function (data) {\n                        middleOperation({\n                            \"name\": \"系统\",\n                            \"id\": \"system\",\n                            \"important\":\"classOne\",\n                            \"text\": \"[系统] 新增: \"+$(\".middleTop .active a\").text() + \",文件保存成功\"\n                        });\n\n                    }, error: function () {\n                        middleOperation({\n                            \"name\": \"系统\",\n                            \"id\": \"system\",\n                            \"important\":\"classThree\",\n                            \"text\": \"[系统] 新增: \"+$(\".middleTop .active a\").text() + \",文件保存失败\"\n                        });\n                    }\n                });\n            }\n\n            function configAddTr() {\n\n                var tbody = $(\".Config-table-Content table tbody\");\n\n                if (globalData.config != \"\") {\n                    $(tbody).append(globalData.config.operationText.data);// tbody结构\n                }\n                var index = $(tbody).find(\"tr\").length;\n                $(\".Config-table-Content tbody tr:last-child td:first-child\").text(index);\n\n                if (globalData.config != \"\") {\n                    var tool = globalData.config.operationText.configToolDefault;   // 工具栏配置\n                    var option = \"\";\n                    Object.keys(tool).map(function (text, index) {\n                        option += \"<option disabled style='font-size: 13px;color: #989797;'>\" + text + \"</option>\";\n                        for (let i = 0; i < tool[text].length; i++) {\n                            option += \"<option data-url=\" + tool[text][i].url + \">\" + tool[text][i].text + \"</option>\";\n                        }\n                    });\n                    $(\".Config-table-Content tbody tr:last-child select\").append(option);\n                }\n            }\n\n\n            $(\".Config-table-Content\").on(\"keydown\", \".ConfigToolSet\", function (e) {\n                var key= e.keyCode;\n                if (key < 90 && key > 65) {\n                    $(this).val(\"\")\n                }\n\n            });\n\n            $(\".Config-table-Content\").on(\"focus\", \".ConfigToolSet\", function () {\n                $(this).unbind(\"keydown\").keydown(function (e) {\n                    $(this).attr(\"key\", e.keyCode);\n                });\n\n            });\n\n\n            $(\".Config-table-Content\").on(\"blur\", \".ConfigToolSet\", function () {\n                var key = $(this).attr(\"key\");\n                var _this = $(this);\n                if (key > 90 && key < 65) {\n                    _this.attr(\"key\", \"\").val(\"\");\n                } else {\n                    $(this).parent().parent().siblings().each(function () {\n                        if ($(this).find(\".ConfigToolSet\").attr(\"key\") == key) {\n                            _this.attr(\"key\", \"\").val(\"\");\n                        }\n                    });\n                    $(_this).val($(_this).val().toUpperCase())\n                }\n\n            });\n\n            var configFun = {\n                ConfigRemoveNUM: function (direction) {\n                    var activeLength = $(\".Config-table-Content .active\");\n                    var TRLength=$(\".Config-table-Content tbody tr\");\n                    if (activeLength.length == 0) {\n                        middleOperation({\n                            \"name\": \"系统\",\n                            \"id\": \"system\",\n                            \"important\":\"classOne\",\n                            \"text\": \"[系统] 新增: 没有选中数据\"\n                        });\n\n                    } else {\n                        var index = activeLength.index();\n                        if (index > 0 && direction == \"up\") {\n                            var dataClone = $(activeLength).clone();\n                            $(activeLength).remove();\n                            $(\".Config-table-Content tbody tr\").eq(index - 1).before(dataClone);\n                        } else if (index < TRLength.length-1 && direction == \"down\") {\n                            var dataClone = $(activeLength).clone();\n                            $(activeLength).remove();\n                            $(\".Config-table-Content tbody tr\").eq(index).after(dataClone);\n                        }\n                        this.sort();\n                    }\n                },\n                sort: function () {\n                    $(\".Config-table-Content tbody tr\").each(function (index, element) {\n                        $(element).find(\"td:first-child\").text(index + 1)\n                    });\n\n                },\n                key: []\n            }\n\n        </script>\n    ",
+	"data" : "\n<tr>\n     <td></td>\n     <td><select class=\"configToolName\"></select></td>\n     <td><input  class=\"toolCustomName\" type=\"text\"></td>\n     <td><input class=\"ConfigToolSet\" maxlength=\"1\" type=\"text\"></td>\n</tr>\n\n",
+	"configTool" : [
+		{
+			"keyCode" : "74",
+			"text" : "病案接收",
+			"key" : "J",
+			"url" : "receive"
+		},
+		{
+			"keyCode" : "66",
+			"text" : "病案退回",
+			"key" : "B",
+			"url" : "back"
+		},
+		{
+			"keyCode" : "71",
+			"text" : "病案归档",
+			"key" : "G",
+			"url" : "archive"
+		},
+		{
+			"keyCode" : "85",
+			"text" : "病案上架",
+			"key" : "U",
+			"url" : "shelves"
+		},
+		{
+			"keyCode" : "67",
+			"text" : "病案复印",
+			"key" : "C",
+			"url" : "addcopy"
+		},
+		{
+			"keyCode" : "75",
+			"text" : "病案借阅",
+			"key" : "K",
+			"url" : "borrowing"
+		},
+		{
+			"keyCode" : "72",
+			"text" : "病案归还",
+			"key" : "H",
+			"url" : "return"
+		},
+		{
+			"keyCode" : "76",
+			"text" : "病案详情查看",
+			"key" : "L",
+			"url" : "look"
+		}
+	],
+	"configRightMouse" : [
+		{
+			"type" : "default",
+			"text" : "接收",
+			"ico" : "",
+			"custom" : "",
+			"url" : "receive"
+		},
+		{
+			"type" : "default",
+			"text" : "新增",
+			"ico" : "",
+			"custom" : "",
+			"url" : "add"
+		},
+		{
+			"type" : "default",
+			"text" : "修改",
+			"ico" : "",
+			"custom" : "",
+			"url" : "update"
+		},
+		{
+			"type" : "default",
+			"text" : "归还",
+			"ico" : "",
+			"custom" : "",
+			"url" : "return"
+		},
+		{
+			"type" : "default",
+			"text" : "新增复印",
+			"ico" : "",
+			"custom" : "",
+			"url" : "addcopy"
+		},
+		{
+			"type" : "default",
+			"text" : "查看",
+			"ico" : "",
+			"custom" : "",
+			"url" : "look"
+		}
+	]
+}

@@ -48,7 +48,8 @@
             align-items: center;
             position: relative;
         }
-        .voice_mian i{
+
+        .voice_mian i {
             display: inline-block;
             width: 15%;
             height: 100%;
@@ -56,7 +57,8 @@
             justify-content: center;
             align-items: center;
         }
-        .voice_mian font{
+
+        .voice_mian font {
             display: inline-block;
             width: 15%;
             height: 100%;
@@ -64,13 +66,14 @@
             justify-content: center;
             align-items: center;
         }
+
         .voice_btn {
-            width: 5px;
+            width: 15px;
             height: 15px;
             border-radius: 3px;
             background: #007ACC;
             position: absolute;
-            left: 15%;
+            left: 53px;
         }
 
         .main_bottom {
@@ -91,20 +94,50 @@
             <p>调节音量：</p>
             <div class="voice_mian">
                 <i class="el-icon-service"></i>
-                <div class="voice_btn"></div>
+                <div class="voice_btn" onmouseover="chooseVoice(this)"></div>
                 <div class="main_bottom">
                     <div class="main_body"></div>
                 </div>
-                <font>12</font>
+                <font class="count">0</font>
             </div>
         </div>
     </div>
-    <script src="../jquery/jquery.min.js"></script>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js">
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
     <script>
-        $(function () {
-            console.log(11);
-        })
+        function chooseVoice(target) {
+            let windowW = $('.main_bottom').width();
+            console.log(windowW);
+            target.onmousedown = function (e) {
+                e = e || window.event;
+                let distanceX = e.clientX - this.offsetLeft;
+                document.onmousemove = function (e) {
+                    e = e || window.event;
+                    let left = e.clientX - distanceX;
+                    if (left < 53) {
+                        left = 53;
+                    }
+                    if (left > windowW + 53 - 15) {
+                        left = windowW + 53 - 15;
+                    }
+                     let hisCount = 230;
+                     let countDis =  left - 53;
+                     let voice = countDis / hisCount;
+                     let voiceNum = voice.toFixed(2)*100;
+                     let voiceStr = voiceNum.toString();
+                     if(voiceStr.length > 5){
+                         voiceStr = voiceStr.slice(0,2)
+                     }
+                     $('.count').text(voiceStr);
+                    $('.voice_btn').css('left', left + 'px');
+
+                    document.onmouseup = function () {
+                        document.onmousemove = null;
+                        document.onmouseup = null;
+                    }
+                }
+            }
+        }
     </script>
 </body>
 

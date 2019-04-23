@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: '微软雅黑';
+        }
+
+        .main {
+            width: 360px;
+            background: #1A1A1A;
+        }
+
+        .timer {
+            width: 100%;
+            height: 110px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .timer .timer_time {
+            width: 90%;
+            color: #FFFFFF;
+            font-size: 35px;
+        }
+
+        .timer .timer_date {
+            width: 90%;
+            color: #419BE1;
+            font-size: 18px;
+        }
+
+        .canlender {
+            width: 100%;
+            height: 345px;
+        }
+
+        .can_check {
+            width: 100%;
+            height: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .check_date,
+        .check_btnup,
+        .check_btndown {
+            color: #FFFFFF;
+            font-size: 18px
+        }
+
+        .check_date {
+            width: 35%;
+            text-align: center;
+        }
+
+        .check_btn {
+            width: 26%;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .check_btnup,
+        .check_btndown {
+            display: inline-block;
+            color: #9E9E9E;
+            width: 31%;
+            text-align: center;
+        }
+
+        .check_btnup:hover,
+        .check_btndown:hover {
+            color: #FFFFFF;
+        }
+
+        .canlender .can_head {
+            width: 100%;
+            height: 16px;
+            font-size: 15px;
+            color: #FFFFFF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .canlender .can_head .can_head_item {
+            display: inline-block;
+            width: 14%;
+            text-align: center;
+        }
+
+        .canlender .can_body {
+            width: 100%;
+            height: 258px;
+            font-size: 15px;
+            color: #FFFFFF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .calendar_item {
+            display: inline-block;
+            width: 14%;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="main">
+            <div class="timer">
+                <h1 class="timer_time"></h1>
+                <p class="timer_date"></p>
+            </div>
+            <hr size='1' style="color:#4A4A4B">
+            <div class="can_check">
+                <span class="check_date"></span>
+                <span class="check_btn">
+                    <span class="check_btnup" onclick="upDate()">
+                        <i class="el-icon-arrow-up"></i>
+                    </span>
+                    <span class="check_btndown" onclick="downDate()">
+                        <i class="el-icon-arrow-down"></i>
+                    </span>
+                </span>
+            </div>
+            <div class="canlender">
+                <div class="can_head">
+                    <span class="can_head_item">一</span>
+                    <span class="can_head_item">二</span>
+                    <span class="can_head_item">三</span>
+                    <span class="can_head_item">四</span>
+                    <span class="can_head_item">五</span>
+                    <span class="can_head_item">六</span>
+                    <span class="can_head_item">日</span>
+                </div>
+                <div class="can_body"></div>
+            </div>
+            <div class="daily"></div>
+            <div class="foot_check"></div>
+        </div>
+    </div>
+
+    <script src="../jquery/jquery.min.js"></script>
+    <script>
+        window.onload = function () {
+            initCanlendar();
+            $('.timer_time').text(getDate()[0]);
+            $('.timer_date').text(getDate()[1]);
+            $('.check_date').text(getDate()[2]);
+            setInterval(() => {
+                $('.timer_time').text(getDate()[0]);
+                $('.timer_date').text(getDate()[1]);
+            }, 1000);
+        }
+
+        function getDate() {
+            let newDate = new Date();
+            let _year = newDate.getFullYear();
+            let _month = newDate.getMonth() + 1;
+            let _day = newDate.getDate();
+            let _hour = newDate.getHours();
+            let _minute = newDate.getMinutes();
+            let _seconds = newDate.getSeconds();
+            let myTime = `${toDouble(_hour)}:${toDouble(_minute)}:${toDouble(_seconds)}`;
+            let myDate = `${_year}年${_month}月${_day}日`
+            let myCheckDate = `${_year}年${_month}月`
+            return [myTime, myDate, myCheckDate];
+        }
+
+        function toDouble(num) {
+            if (num < 10) {
+                return '0' + num;
+            }
+            return num;
+        }
+
+        function upDate() {
+            let nowYear = Number($('.check_date').text().split('年')[0]);
+            let nowMonth = Number($('.check_date').text().split('年')[1].replace('月', ''));
+            nowMonth++;
+            if (nowMonth > 12) {
+                nowMonth = 1;
+                nowYear++;
+            }
+            let upDate = `${nowYear}年${nowMonth}月`;
+            $('.check_date').text(upDate);
+        }
+
+        function downDate() {
+            let nowYear = Number($('.check_date').text().split('年')[0]);
+            let nowMonth = Number($('.check_date').text().split('年')[1].replace('月', ''));
+            nowMonth--;
+            if (nowMonth < 1) {
+                nowMonth = 12;
+                nowYear--;
+            }
+            let downDate = `${nowYear}年${nowMonth}月`;
+            $('.check_date').text(downDate);
+        }
+
+        function initCanlendar(year, month) {
+            let html = '';
+            let allDay;
+            if (year % 4 === 0 && year % 100 != 0) {
+                allDay = 29;
+            }
+            if (month % 2 === 0 && month != 7) {
+                allDay = 31;
+            } else {
+                allDay = 30;
+            }
+            for (let i = 0; i < 42; i++) {
+                html += `<span class='calendar_item'>${i}</span>`;
+            }
+            $('.can_body').html(html);
+        }
+    </script>
+</body>
+
+</html>
