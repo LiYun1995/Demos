@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../../css/jquery-ui.min.css">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main {
+            width: 800px;
+            height: 800px;
+            border: 2px solid #000;
+            display: flex;
+            justify-content: center;
+            align-content: center;
+        }
+
+        .left {
+            width: 30%;
+            height: 100%;
+            /* border-right: 2px solid #000; */
+            box-sizing: border-box;
+        }
+
+        .left_item1 {
+            width: 100%;
+            height: 30%;
+        }
+
+        .left_item2 {
+            width: 100%;
+            height: 70%;
+        }
+
+        .mid {
+            width: 70%;
+            height: 100%;
+        }
+
+        .mid_item1 {
+            width: 100%;
+            height: 40%;
+        }
+
+        .mid_item2 {
+            width: 100%;
+            height: 60%;
+        }
+
+        .item_head {
+            width: 100%;
+            height: 25px;
+            background: linear-gradient(#979797, #808080);
+            border: 1px solid rgb(178, 178, 178);
+            box-sizing: border-box;
+        }
+
+        .item_content {
+            width: 100%;
+            height: calc(100% - 25px);
+            background: #D6D6D6;
+        }
+
+        .ui-state-highlight {
+            height: 1.5em;
+            line-height: 1.2em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="main">
+            <div class="left connectedSortable">
+                <div class="left_item1">
+                    <div class="item_head">left-item1</div>
+                    <div class="item_content"></div>
+                </div>
+                <div class="left_item2">
+                    <div class="item_head">left-item2</div>
+                    <div class="item_content"></div>
+                </div>
+            </div>
+            <div class="mid connectedSortable">
+                <div class="mid_item1">
+                    <div class="item_head">mid-item1</div>
+                    <div class="item_content"></div>
+                </div>
+                <div class="mid_item2">
+                    <div class="item_head">mid-item1</div>
+                    <div class="item_content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../../jquery/jquery.min.js"></script>
+    <script src="../../jquery-ui/jquery-ui.min.js"></script>
+    <script>
+        $(function () {
+            $('.left,.mid').sortable({
+                connectWith: '.connectedSortable',
+                handle: ".item_head",
+                placeholder: "ui-state-highlight"
+            }).disableSelection();
+        })
+    </script>
+</body>
+
+</html>
