@@ -130,6 +130,10 @@
             width: 14%;
             text-align: center;
         }
+
+        .gray_item {
+            color: #4A4A4B;
+        }
     </style>
 </head>
 
@@ -169,10 +173,11 @@
         </div>
     </div>
 
-    <script src="../jquery/jquery.min.js"></script>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
     <script>
         window.onload = function () {
-            initCanlendar();
+            let newCalendar = new Date()
+            initCanlendar(newCalendar.getFullYear(), newCalendar.getMonth() + 1);
             $('.timer_time').text(getDate()[0]);
             $('.timer_date').text(getDate()[1]);
             $('.check_date').text(getDate()[2]);
@@ -182,7 +187,7 @@
             }, 1000);
         }
 
-        function getDate() {
+        function getDate() { //初始化时间
             let newDate = new Date();
             let _year = newDate.getFullYear();
             let _month = newDate.getMonth() + 1;
@@ -196,14 +201,14 @@
             return [myTime, myDate, myCheckDate];
         }
 
-        function toDouble(num) {
+        function toDouble(num) { //小于10的数用00形式显示
             if (num < 10) {
                 return '0' + num;
             }
             return num;
         }
 
-        function upDate() {
+        function upDate() {  //上翻月
             let nowYear = Number($('.check_date').text().split('年')[0]);
             let nowMonth = Number($('.check_date').text().split('年')[1].replace('月', ''));
             nowMonth++;
@@ -213,9 +218,10 @@
             }
             let upDate = `${nowYear}年${nowMonth}月`;
             $('.check_date').text(upDate);
+            initCanlendar(nowYear, nowMonth);
         }
 
-        function downDate() {
+        function downDate() {   //下翻月
             let nowYear = Number($('.check_date').text().split('年')[0]);
             let nowMonth = Number($('.check_date').text().split('年')[1].replace('月', ''));
             nowMonth--;
@@ -225,23 +231,88 @@
             }
             let downDate = `${nowYear}年${nowMonth}月`;
             $('.check_date').text(downDate);
+            initCanlendar(nowYear, nowMonth);
         }
 
-        function initCanlendar(year, month) {
+        function initCanlendar(year, month) {  //初始化日历并显示
             let html = '';
-            let allDay;
-            if (year % 4 === 0 && year % 100 != 0) {
-                allDay = 29;
-            }
-            if (month % 2 === 0 && month != 7) {
-                allDay = 31;
+            let allDay = getAllDay(year, month);//一个月有几天
+            let beforAllDay = getAllDay(year, month - 1); 
+            let beforDateList = [];
+            let dateList = [];
+            let afterDateList = [];
+            let beforFirstDay = 0;
+            let afterLastDay = 0;
+            let arguments = `${year},${toDouble(month)},1`
+            let firstDay = new Date(arguments).getDay(); //一个月第一天是星期几
+            if (firstDay === 0) {
+                beforFirstDay = 6
             } else {
-                allDay = 30;
+                beforFirstDay = firstDay - 1;
             }
-            for (let i = 0; i < 42; i++) {
-                html += `<span class='calendar_item'>${i}</span>`;
+            afterLastDay = 42 - allDay - beforFirstDay;
+            for (let i = 0; i < beforFirstDay; i++) {
+                beforDateList.unshift(beforAllDay - i);
+            }
+            for (let i = 0; i < allDay; i++) {
+                dateList[i] = i + 1;
+            }
+            for (let i = 0; i < afterLastDay; i++) {
+                afterDateList[i] = i + 1;
+                // debugger
+            }
+            for (let i = 0; i < beforDateList.length; i++) {
+                html += `<span class='calendar_item  gray_item'>${beforDateList[i]}</span>`;
+            }
+            for (let i = 0; i < dateList.length; i++) {
+                html += `<span class='calendar_item'>${dateList[i]}</span>`
+            }
+            for (let i = 0; i < afterDateList.length; i++) {
+                html += `<span class='calendar_item gray_item'>${afterDateList[i]}</span>`
             }
             $('.can_body').html(html);
+        }
+
+        function isRunYear(year) { //判断闰年
+            if (year % 4 === 0 && year % 100 != 0 || year % 100 === 0 && year % 400 === 0) {
+                return 29;
+            }
+            return 28;
+        }
+
+        function getAllDay(year, month) {
+            let myMonth = month;
+            if (myMonth === 0) {
+                myMonth = 12;
+            }
+            let allDay = 0; // 一个月有多少天
+            switch (myMonth) {
+                case 1: allDay = 31
+                    break;
+                case 2: allDay = isRunYear(year)
+                    break;
+                case 3: allDay = 31
+                    break;
+                case 4: allDay = 30
+                    break;
+                case 5: allDay = 31
+                    break;
+                case 6: allDay = 30
+                    break;
+                case 7: allDay = 31
+                    break;
+                case 8: allDay = 31
+                    break;
+                case 9: allDay = 30
+                    break;
+                case 10: allDay = 31
+                    break;
+                case 11: allDay = 30
+                    break;
+                case 12: allDay = 31
+                    break;
+            }
+            return allDay;
         }
     </script>
 </body>
