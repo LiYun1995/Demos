@@ -45,12 +45,13 @@
 
         .left_item1 {
             width: 100%;
-            height: 30%;
+            max-height: 30%;
         }
 
         .left_item2 {
             width: 100%;
             height: 70%;
+            min-height: 35%;
         }
 
         .mid {
@@ -108,7 +109,7 @@
                     <div class="item_content"></div>
                 </div>
                 <div class="mid_item2">
-                    <div class="item_head">mid-item1</div>
+                    <div class="item_head">mid-item2</div>
                     <div class="item_content"></div>
                 </div>
             </div>
@@ -118,11 +119,45 @@
     <script src="../../jquery-ui/jquery-ui.min.js"></script>
     <script>
         $(function () {
-            $('.left,.mid').sortable({
-                connectWith: '.connectedSortable',
-                handle: ".item_head",
-                placeholder: "ui-state-highlight"
-            }).disableSelection();
+            function toSort() {
+                let activeHeight = 0;
+                $('.left,.mid').sortable({
+                    connectWith: '.connectedSortable',
+                    handle: ".item_head",
+                    placeholder: "ui-state-highlight",
+                    scroll: true,
+                    tolerance: 'pointer',
+                    revert: 300,
+                    opacity: 1,
+                    sort: function (event, ui) {  //// 移动过程中事件
+                        // $('.main').css('height','50%');
+                        //console.log(event);
+                    },
+                    start: function (event, ui) { //排序开始时触发事件
+                        //console.log(event.target);
+                    },
+                    stop: function (event, ui) {  //当排序停止时触发该事件
+                        //console.log(event.target);
+                    },
+                    over: function (event, ui) {  ////移动到一个 sortable 列表时触发该事件。
+
+                    },
+                    receive: function (event, ui) { //被放置到另一个列表后触发该事件
+                        //console.log(event.target);
+                        let _this = event.target;
+                        let allChildren = $(_this).children();
+                        let allHeight = 0;
+                        for (let i = 0; i < allChildren.length; i++) {
+                            allHeight += Number($(allChildren[i]).css('height').split('p')[0]);
+                        }
+                        console.log(allHeight);
+                    },
+                    beforStop: function (event, ui) {  //当排序停止时触发该事件，除了当占位符（placeholder）/助手（helper）仍然可用时。
+                        // console.log(event,ui);
+                    }
+                }).disableSelection();
+            }
+            toSort();
         })
     </script>
 </body>
