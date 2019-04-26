@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../../css/jquery-ui.min.css">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main {
+            width: 800px;
+            height: 800px;
+            border: 2px solid #000;
+            display: flex;
+            justify-content: center;
+            align-content: center;
+            overflow: hidden;
+        }
+
+        .left {
+            width: 30%;
+            height: 100%;
+            /* border-right: 2px solid #000; */
+            box-sizing: border-box;
+        }
+
+        .left_item1 {
+            width: 100%;
+            height: 30%;
+        }
+
+        .left_item2 {
+            width: 100%;
+            height: 70%;
+        }
+
+        .mid {
+            width: 70%;
+            height: 100%;
+        }
+
+        .mid_item1 {
+            width: 100%;
+            height: 40%;
+        }
+
+        .mid_item2 {
+            width: 100%;
+            height: 60%;
+        }
+
+        .item_head {
+            width: 100%;
+            height: 25px;
+            background: linear-gradient(#979797, #808080);
+            border: 1px solid rgb(178, 178, 178);
+            box-sizing: border-box;
+        }
+
+        .item_content {
+            width: 100%;
+            height: calc(100% - 25px);
+            background: #D6D6D6;
+        }
+
+        .ui-state-highlight {
+            height: 1.5em;
+            line-height: 1.2em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="main">
+            <div class="left connectedSortable">
+                <div class="left_item1">
+                    <div class="item_head">left-item1</div>
+                    <div class="item_content"></div>
+                </div>
+                <div class="left_item2">
+                    <div class="item_head">left-item2</div>
+                    <div class="item_content"></div>
+                </div>
+            </div>
+            <div class="mid connectedSortable">
+                <div class="mid_item1">
+                    <div class="item_head">mid-item1</div>
+                    <div class="item_content"></div>
+                </div>
+                <div class="mid_item2">
+                    <div class="item_head">mid-item2</div>
+                    <div class="item_content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../../jquery/jquery.min.js"></script>
+    <script src="../../jquery-ui/jquery-ui.min.js"></script>
+    <script>
+        $(function () {
+            class Sort {
+                constructor() {
+                    this.allHead = $('.item_head');
+                    this.itemHeightMap = new Map();
+                }
+                initAllHeight() {
+                    for (let i = 0; i < this.allHead.length; i++) {
+                        this.itemHeightMap.set($(this.allHead[i].parentNode).attr('class'), $(this.allHead[i].parentNode).css('height'));
+                    }
+                    return this.itemHeightMap;
+                }
+            }
+
+            let itemHeightMap = new Sort().initAllHeight();   //获得所有可拖拽元素的高度
+
+            function toSort() {
+                let activeHeight = 0;
+                $('.left,.mid').sortable({
+                    connectWith: '.connectedSortable',
+                    handle: ".item_head",
+                    placeholder: "ui-state-highlight",
+                    scroll: true,
+                    tolerance: 'pointer',
+                    revert: 300,
+                    opacity: 1,
+                    sort: function (event, ui) {  //// 移动过程中事件
+                        // $('.main').css('height','50%');
+                        //console.log(event);
+                    },
+                    start: function (event, ui) { //排序开始时触发事件
+                        //console.log(event);
+                        let allHeight = 0;
+                        let heightArr = [];
+                        let allBrothers = $(ui.item[0]).siblings();
+                        let activeHeight = itemHeightMap.get($(allBrothers.context).attr('class'))
+                        // console.log(activeHeight);
+                        $(allBrothers.context).css('height', activeHeight);
+                        for (let i = 0; i < allBrothers.length; i++) {
+                            if ($(allBrothers[i]).hasClass('ui-state-highlight') === false) {
+                                allHeight += Number($(allBrothers[i]).css('height').split('p')[0]);
+                            }
+                        }
+                        //console.log(allHeight);
+                        for (let i = 0; i < allBrothers.length; i++) {
+                            if ($(allBrothers[i]).hasClass('ui-state-highlight') === false) {
+                                heightArr[i] = Number($(allBrothers[i]).css('height').split('p')[0]) / allHeight * 800;
+                                $(allBrothers[i]).css('height', heightArr[i] + 'px');
+                            }
+                        }
+
+                    },
+                    stop: function (event, ui) {  //当排序停止时触发该事件
+                        //console.log(event.target);
+                    },
+                    over: function (event, ui) {  ////移动到一个 sortable 列表时触发该事件。
+                    },
+                    receive: function (event, ui) { //被放置到另一个列表后触发该事件
+                        //console.log(event.target);
+                        let _this = event.target;
+                        let allChildren = $(_this).children();
+                        let allHeight = 0;
+                        let heightArr = [];
+
+                        for (let i = 0; i < allChildren.length; i++) {
+                            // console.log(Number($(allChildren[i]).css('height').split('p')[0]));
+                            allHeight += Number(itemHeightMap.get(allChildren[i].className).split('p')[0]);
+                        }
+                        for (let i = 0; i < allChildren.length; i++) {
+                            heightArr[i] = Number(itemHeightMap.get(allChildren[i].className).split('p')[0]) / allHeight * 800
+                            $(allChildren[i]).css('height', heightArr[i] + 'px');
+                        }
+                        //console.log(heightArr);
+                    },
+                    beforStop: function (event, ui) {  //当排序停止时触发该事件，除了当占位符（placeholder）/助手（helper）仍然可用时。
+                        // console.log(event,ui);
+                    }
+                }).disableSelection();
+            }
+            toSort();
+        })
+    </script>
+</body>
+
+</html>

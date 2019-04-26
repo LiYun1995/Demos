@@ -12,14 +12,16 @@
     <script>
         /* all 和 apply 是为了动态改变 this 而出现的，当一个 object 没有某个方法（本栗子中banana没有say方法），但是其他的有（本栗子中apple有say方法），我们可以借助call或apply用其它对象的方法来操作。 */
         function dddp() { };
+        
         dddp.prototype = {
             name: 'LYGG',
             play() {
                 console.log(`Sekiro--${this.name}`);
             }
         }
-
+        // console.log(dddp.prototype);
         let obj1 = new dddp();
+        console.log(obj1);
         obj1.play();
         let obj2 = {
             name: 'Mawaer'

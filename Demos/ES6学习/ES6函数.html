@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        /* 函数参数的扩展 */
+        //默认参数
+        //基本用法
+        function test1(name, age = 23) {
+            console.log(`name:${name},age:${age}`);
+        }
+
+        test1('LYGG');//name:LYGG,age:23
+        test1('Mawaer', 24);//ES6函数.html:17 name:Mawaer,age:24
+
+        //使用函数默认参数时，不允许有同名参数。
+        // 报错
+        //SyntaxError: Duplicate parameter name not allowed in this context
+        // function fn(name, name, age = 17) {
+        //     console.log(name + "," + age);
+        // }
+        //只有在未传递参数，或者参数为 undefined 时，才会使用默认参数，null 值被认为是有效的值传递。
+        test1('LYGG', null); //name:LYGG,age:null
+
+        //函数参数默认值存在暂时性死区，在函数参数默认值表达式中，还未初始化赋值的参数值无法作为其他参数的默认值。
+        function f1(x, y = x) {
+            console.log(x, y);
+        }
+        f1(1);  // 1 1
+
+        function f2(x = y) {
+            console.log(x);
+        }
+        // f2();  // ReferenceError: y is not defined
+
+        /* 不定参数 */
+        //不定参数用来表示不确定参数个数，形如，...变量名，由...加上一个具名参数标识符组成。具名参数只能放在参数组的最后，并且有且只有一个不定参数。
+        //基本用法
+        function test2(...args) {
+            console.log(args);
+            console.log(args.length);
+        }
+        test2(1, 2, 3, 4);  //4
+
+        /* 箭头函数 */
+        //箭头函数提供了一种更加简洁的函数书写方式。基本语法是：
+        //参数 =>函数体
+        let test3 = a => a;
+        //等同于
+        // let test3 = function(a){return a};
+        test3(3); //3
+
+        //当箭头函数没有参数或者有多个参数，要用 () 括起来。
+        let test4 = (a, b) => a + b;
+        test4(2, 3); //5
+
+        //当箭头函数函数体有多行语句，用 {} 包裹起来，表示代码块，当只有一行语句，并且需要返回结果时，可以省略 {} , 结果会自动返回。
+        let test5 = (a, b) => {
+            let result = a + b;
+            return result;
+        }
+        test5(6, 2);  // 8
+
+        //当箭头函数要返回对象的时候，为了区分于代码块，要用 () 将对象包裹起来
+        /* var f = (id, name) => { id: id, name: name };
+        f(6, 2);  // SyntaxError: Unexpected token : */
+
+        let test6 = () => ({ a: 1, b: 2 });
+        test6(); //{a: 1, b: 2}
+
+        //注意点：没有 this、super、arguments 和 new.target 绑定。
+
+        let test7 = () => {
+            // 箭头函数里面没有 this 对象，
+            // 此时的 this 是外层的 this 对象，即 Window 
+            console.log(this);
+            //console.log(arguments); //报错  ES6函数.html:84 Uncaught ReferenceError: arguments is not defined
+        };
+        test7();  //window
+
+        //箭头函数体中的 this 对象，是定义函数时的对象，而不是使用函数时的对象。
+        function test8() {
+            setTimeout(() => {
+                console.log(this.a);
+            }, 100);
+        }
+        test8.call({ a: 14 }); //14
+
+        // /不可以作为构造函数，也就是不能使用 new 命令，否则会报错
+
+        /* 适用使用的场景 */
+        //ES6 之前，JavaScript 的 this 对象一直很令人头大，回调函数，经常看到 var self = this 这样的代码，为了将外部 this 传递到回调函数中，那么有了箭头函数，就不需要这样做了，直接使用 this 就行。
+        window.game = 'SSDT';
+        let person1 = {
+            name: 'LYGG',
+            age: 23,
+            game: 'Sekiro Shadow Die Twice',
+            play: function () {
+                setTimeout(function () {
+                    console.log(this.game);
+                }, 100);
+            }
+        }
+
+        person1.play(); // 'SSDT'
+
+        let person2 = {
+            name: 'LYGG',
+            age: 23,
+            game: 'Sekiro Shadow Die Twice',
+            play: function () {
+                setTimeout(() => {
+                    console.log(this.game)
+                }, 100)
+            }
+        }
+        person2.play(); //Sekiro Shadow Die Twice
+
+        //不适用的场景
+        //定义方法并且该方法中包含this
+        let Person3 = {
+            'age': 18,
+            'sayHello': () => {
+                console.log(this.age);
+            }
+        };
+        var age = 20;
+        Person3.sayHello();  // 20 // 此时 this 指向的是全局对象
+
+        let Person4 = {
+            'age': 18,
+            'sayHello': function () {
+                console.log(this.age);
+            }
+        };
+        var age = 20;
+        Person4.sayHello();   // 18
+        // 此时的 this 指向 Person1 对象
+
+        //需要动态this的时候
+        /* var button = document.getElementById('userClick');
+        button.addEventListener('click', () => {
+            this.classList.toggle('on');
+        }); */
+        //button 的监听函数是箭头函数，所以监听函数里面的 this 指向的是定义的时候外层的 this 对象，即 Window，导致无法操作到被点击的按钮对象。
+    </script>
+</body>
+
+</html>
