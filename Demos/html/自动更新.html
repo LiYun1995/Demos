@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        let http = require('http');
+        let fs = require('fs');
+        let request = require('request');
+        let unzip = require('unzip2');
+        let Driver = function () {
+            this.timer = '';
+            this.timer2 = '';
+        };
+        Driver.prototype = {
+            /* 读取本地版本 */
+            readFile: function () {
+                let self = this;
+                if (fs.existsSync('src/js/global.js')) {
+                    self.casel();
+                } else {
+                    $.ajax({
+                        type: 'post',
+                        url: 'url接口地址',
+                        dataType: 'jsonp',
+                        contentType: 'application/jsonp;charset=utf-8',
+                        data: { 'userId': 0 },
+                        success: function (data) {
+                            console.log('正在下载压缩包...');
+                            if (data.code == 0) {
+                                if (data.result.update == 1) {
+                                    let gx = document.getElementsByClassName('gx')[0];
+                                    gx.style.display = 'block';
+                                    /* 下载地址 下载到的目录 */
+                                    if (fs.existsSync('nsrc') || fs.existsSync('upload/zip')) {
+                                        self.rmdirFile('upload/zip', function () {
+                                            self.rmdirFile('nsrc', function () {
+                                                self.createDir('upload/zip', function () {
+                                                    console.log('创建下载zip目录成功...');
+                                                    //创建下载zip的目录
+                                                    self.downFile(data.result.url);
+                                                });
+                                            })
+                                        })
+                                    } else {
+                                        self.createDir('upload/zip', function () {
+                                            console.log('创建下载zip目录成功...');
+                                            //创建下载zip的目录
+                                            self.downFile(data.result.url);
+                                        });
+                                    }
+                                } else {
+                                    setTimeout(function () {
+                                        window.location.href = '../src/Login/login.html';
+                                    }, 2250);
+                                }
+                            }
+                        },
+                        error: function () {
+                            alert(data.msg);
+                        }
+                    });
+                }
+            },
+            /* 如果global没有被删除 */
+            case1: function () { }
+        }
+    </script>
+</body>
+
+</html>
