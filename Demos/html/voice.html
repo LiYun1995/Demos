@@ -83,6 +83,9 @@
         }
 
         .main_body {
+            z-index: 99999;
+            width: 0;
+            height: 100%;
             background: #069BFF;
         }
     </style>
@@ -120,17 +123,17 @@
                     if (left > windowW + 53 - 15) {
                         left = windowW + 53 - 15;
                     }
-                     let hisCount = 230;
-                     let countDis =  left - 53;
-                     let voice = countDis / hisCount;
-                     let voiceNum = voice.toFixed(2)*100;
-                     let voiceStr = voiceNum.toString();
-                     if(voiceStr.length > 5){
-                         voiceStr = voiceStr.slice(0,2)
-                     }
-                     $('.count').text(voiceStr);
+                    let hisCount = 230;
+                    let countDis = left - 53;
+                    let voice = countDis / hisCount;
+                    let voiceNum = voice.toFixed(2) * 100;
+                    let voiceStr = voiceNum.toString();
+                    if (voiceStr.length > 5) {
+                        voiceStr = voiceStr.slice(0, 2)
+                    }
+                    $('.count').text(voiceStr);
                     $('.voice_btn').css('left', left + 'px');
-
+                    $('.main_body').css('width', left - 53 + 'px');
                     document.onmouseup = function () {
                         document.onmousemove = null;
                         document.onmouseup = null;
