@@ -1,25 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>Document</title>
 </head>
+
 <body>
 	<script>
-		window.onload = function(){
+		function operationCode() {
+			if (row.length != 1) {
+				if (globalData.config.operating[operationURL].mode == "Popup") {
+					$("body").append($("#operationModel").html());
+					if (globalData.config.operating[operationURL].html) {
+						$(".commonInform").html(globalData.config.operating[operationURL].html);
+						$(".commonInform").append(globalData.config.operating[operationURL].htmlCode);
+						var PatientValidate = new Verification();
+					} else {
+						$(".commonInform").html(" <div class='emptyInform'>无数据</div>");
+					}
+					operationSubject();
+				}
+			} else {
+				if (row[0].borrowState == 1) {
+					if (globalData.config.operating[operationURL].mode == "Popup") {
+						$("body").append($("#operationModel").html());
+						if (globalData.config.operating[operationURL].html) {
+							$(".commonInform").html(globalData.config.operating[operationURL].html);
+							$(".commonInform").append(globalData.config.operating[operationURL].htmlCode);
+							var PatientValidate = new Verification();
+						} else {
+							$(".commonInform").html(" <div class='emptyInform'>无数据</div>");
+						}
+						operationSubject();
+					}
 
-		}	
-
-		function test(name){
-			this.name = name;
-			console.log(this.name);
-			console.log(this === window);
-			console.log(this === global);
+				} else {
+					middleOperation({
+						"name": "系统",
+						"id": "System",
+						"important": "classTwo",
+						"text": "[系统] 请选择已借出的病案"
+					});
+				}
+			}
 		}
-
-		test('LYGG');
 	</script>
 </body>
+
 </html>
