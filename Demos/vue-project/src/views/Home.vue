@@ -1,18 +1,33 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <button @click="modal1 = true">Modal</button>
+     <LModal title="Hello LYGG" width=800 ref='modalChild' v-model="modal1">
+          <h1>Sekiro</h1>
+          <p>Shadows</p>
+          <p>Die</p>
+          <p>Twice</p>
+      </LModal>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+import LModal from "@/components/Modal.vue";
 
 export default {
   name: "home",
+  data(){
+    return {
+      modal1:false
+    }
+  },
   components: {
-    HelloWorld
+    LModal
+  },
+  methods:{
+    // modalShow(){
+    //   this.$refs.modalChild.toggleModal();
+    // }
   }
 };
 </script>
