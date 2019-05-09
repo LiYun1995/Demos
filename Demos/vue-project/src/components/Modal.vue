@@ -1,5 +1,5 @@
 <template>
-    <div :class="[myComponentsName + '_container']" :style="configStyles" v-if="show">
+    <div :class="[myComponentsName + '_container']" :style="configStyles" v-if="visible">
         <div :class="[myComponentsName + '_header']">
             <h1 :class="[myComponentsName + '_title']">{{title}}</h1>
             <span :class="[myComponentsName + '_close']" @click="toggleModal">×</span>
@@ -14,12 +14,6 @@
 const myComponentsName = "l_modal";
 export default {
   name: "Lmodal",
-  data() {
-    return {
-      myComponentsName: myComponentsName,
-      show: false
-    };
-  },
   props: {
     title: {
       type: String
@@ -27,9 +21,24 @@ export default {
     width: {
       type: [Number, String],
       default: 50
+    },
+    value:{
+      type:Boolean,
+      default:false
     }
   },
-  mounted() {},
+  data() {
+    return {
+      myComponentsName: myComponentsName,
+      visible:this.value
+    };
+  },
+  mounted() {console.log(this.value)},
+  watch:{
+    value(val){
+      this.visible = val;
+    }
+  },
   computed: {
     configStyles() {
       return {
@@ -39,7 +48,8 @@ export default {
   },
   methods: {
     toggleModal() {
-      this.show = this.show ? false : true;
+      this.visible = false;
+      this.$emit('input',false);
     }
   }
 };

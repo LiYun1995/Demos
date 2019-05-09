@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <button @click="modal1 = true">Modal</button>
+    <button @click="modal1 = !modal1">Modal</button>
      <LModal title="Hello LYGG" width=800 ref='modalChild' v-model="modal1">
           <h1>Sekiro</h1>
           <p>Shadows</p>
@@ -16,18 +16,14 @@ import LModal from "@/components/Modal.vue";
 
 export default {
   name: "home",
-  data(){
+  data() {
     return {
-      modal1:false
-    }
+      modal1: false
+    };
   },
   components: {
     LModal
   },
-  methods:{
-    // modalShow(){
-    //   this.$refs.modalChild.toggleModal();
-    // }
-  }
+  methods: {}
 };
 </script>
