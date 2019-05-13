@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+    }
+
+    .main {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      width: 400px;
+      height: 200px;
+      border: 1px solid #000000;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center
+    }
+
+    .container .btnControl {
+      position: absolute;
+      width: 100%;
+      height: 50px;
+    }
+
+    .container .btnControl span {
+      display: inline-block;
+      width: 50px;
+      height: 100%;
+      background: gray;
+      text-align: center;
+      line-height: 50px;
+      cursor: pointer;
+    }
+
+    .container ul {
+      list-style: none;
+      width: 1200px;
+      height: 100%;
+    }
+
+    .container ul li {
+      float: left;
+      width: 400px;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="main">
+    <div class="container">
+      <div class="btnControl">
+        <span style="float:left;margin-left: 30px" id="left">左</span>
+        <span style="float:right;margin-right: 30px" id="right">右</span>
+      </div>
+      <ul id="card">
+        <li>
+          <img src="../imgs/shirt1.gif" alt="无图片">
+        </li>
+        <li>
+          <img src="../imgs/shirt2.gif" alt="无图片">
+        </li>
+        <li>
+          <img src="../imgs/shirt3.gif" alt="无图片">
+        </li>
+      </ul>
+    </div>
+  </div>
+  <script>
+    let cardDom = document.getElementById('card');
+    let leftDom = document.getElementById('left');
+    let rightDom = document.getElementById('right');
+    function checkDom(dom) {
+      if (dom === 'left') {
+        return -400
+      } return 400
+    }
+    leftDom.onclick = function () {
+      setInterval(myAnimate(400, 10, 'left'), 100)
+    }
+    // leftDom.addEventListener('click', function (e = window.event) {
+
+    // });
+    function myAnimate(long, between, dom) {
+      console.log(1);
+      let mgLeft = Number(cardDom.style.marginLeft.split('p')[0]) || 0;
+      dom === 'left' ? mgLeft -= between : mgLeft += between;
+      between += between;
+      if (between == long) {
+        window.clearInterval(maInterval);
+      }
+      cardDom.setAttribute('style', `margin-left:${mgLeft}px`);
+    }
+
+
+
+
+  </script>
+</body>
+
+</html>
