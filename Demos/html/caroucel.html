@@ -54,14 +54,20 @@
 
     .container ul {
       list-style: none;
-      width: 1200px;
       height: 100%;
+      white-space: nowrap;
+      font-size: 0px;
     }
 
     .container ul li {
-      float: left;
+      display: inline-block;
       width: 400px;
       height: 100%;
+    }
+
+    .card-li {
+      font-size: 18px;
+      font-weight: 100;
     }
   </style>
 </head>
@@ -74,15 +80,10 @@
         <span style="float:right;margin-right: 30px" id="right">右</span>
       </div>
       <ul id="card">
-        <li>
-          <img src="../imgs/shirt1.gif" alt="无图片">
-        </li>
-        <li>
-          <img src="../imgs/shirt2.gif" alt="无图片">
-        </li>
-        <li>
-          <img src="../imgs/shirt3.gif" alt="无图片">
-        </li>
+        <li class="card-li" style="background:red">1 </li>
+        <li class="card-li" style="background:yellow">2</li>
+        <li class="card-li" style="background:blue">3</li>
+        <li class="card-li" style="background:red">4</li>
       </ul>
     </div>
   </div>
@@ -90,30 +91,81 @@
     let cardDom = document.getElementById('card');
     let leftDom = document.getElementById('left');
     let rightDom = document.getElementById('right');
-    function checkDom(dom) {
-      if (dom === 'left') {
-        return -400
-      } return 400
-    }
-    leftDom.onclick = function () {
-      setInterval(myAnimate(400, 10, 'left'), 100)
-    }
-    // leftDom.addEventListener('click', function (e = window.event) {
+    let cardLiDom = document.getElementsByClassName('card-li');
+    let intervalSet = new Set();
+    let waitTime = 0;
+    let isAuto = true;
+    const cycle = 3000;
 
-    // });
-    function myAnimate(long, between, dom) {
-      console.log(1);
+    const autoPlay = function () {
+      if (isAuto) {
+        allDestroy()
+        window.whatFuck = setInterval(() => {
+          if (window.autoInterval) {
+            window.clearInterval(autoInterval);
+          }
+          window.autoInterval = setInterval("autoAnimate(400,10)", 1);
+          intervalSet.add(autoInterval)
+        }, cycle);
+        intervalSet.add(whatFuck)
+      }
+    }
+
+    const allDestroy = function () {
+      for (let item of intervalSet) {
+        window.clearInterval(item);
+      }
+    }
+
+    function clickToggle(long, between, dom) {
+      waitTime = long / between;
+      window.myInterval = setInterval(`clickAnimate(${long}, ${between}, '${dom}')`, 1);
+      intervalSet.add(myInterval)
+    }
+
+    window.onload = autoPlay;
+    leftDom.onclick = function () {
+      if (!window.myInterval) {
+        allDestroy();
+      }
+      clickToggle(400, 10, 'left');
+    }
+
+    rightDom.onclick = function () {
+      if (!window.myInterval) {
+        allDestroy();
+      }
+      clickToggle(400, 10, 'right');
+    }
+
+    function clickAnimate(long, between, dom) {
+      // debugger;
       let mgLeft = Number(cardDom.style.marginLeft.split('p')[0]) || 0;
+      if (mgLeft == 0 && dom == 'right') {
+        mgLeft = -long * (cardLiDom.length - 1);
+        cardDom.setAttribute('style', `margin-left:${mgLeft}px`);
+      } else if (Math.abs(mgLeft) === long * (cardLiDom.length - 1) && dom !== 'right') {
+        mgLeft = 0;
+      }
       dom === 'left' ? mgLeft -= between : mgLeft += between;
-      between += between;
-      if (between == long) {
-        window.clearInterval(maInterval);
+      if (Math.abs(mgLeft) % long === 0) {
+        window.clearInterval(myInterval);
       }
       cardDom.setAttribute('style', `margin-left:${mgLeft}px`);
     }
 
-
-
+    function autoAnimate(long, between) {
+      let mgLeft = Number(cardDom.style.marginLeft.split('p')[0]) || 0;
+      if (Math.abs(mgLeft) === long * (cardLiDom.length - 1)) {
+        mgLeft = 0;
+      }
+      // debugger;
+      mgLeft -= between
+      if (Math.abs(mgLeft) % long === 0) {
+        window.clearInterval(autoInterval);
+      }
+      cardDom.setAttribute('style', `margin-left:${mgLeft}px`);
+    }
 
   </script>
 </body>
