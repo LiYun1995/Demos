@@ -1,5 +1,5 @@
 {
-  "name": "electrondemo",
+  "name": "exceltools",
   "version": "0.0.1",
   "author": "LiYun <616852971@qq.com>",
   "description": "An electron-vue project",
@@ -17,7 +17,7 @@
     "postinstall": ""
   },
   "build": {
-    "productName": "electrondemo",
+    "productName": "exceltools",
     "appId": "com.example.yourapp",
     "directories": {
       "output": "build"

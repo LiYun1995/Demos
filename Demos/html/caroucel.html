@@ -80,10 +80,16 @@
         <span style="float:right;margin-right: 30px" id="right">右</span>
       </div>
       <ul id="card">
-        <li class="card-li" style="background:red">1 </li>
-        <li class="card-li" style="background:yellow">2</li>
-        <li class="card-li" style="background:blue">3</li>
-        <li class="card-li" style="background:red">4</li>
+        <li class="card-li" style="background:red">
+          <img src="../imgs/shirt1.gif" alt="">
+        </li>
+        <li class="card-li" style="background:yellow">
+          <img src="../imgs/shirt2.gif" alt=""></li>
+        <li class="card-li" style="background:blue">
+          <img src="../imgs/shirt3.gif" alt=""></li>
+        <li class="card-li" style="background:red">
+          <img src="../imgs/shirt1.gif" alt="">
+        </li>
       </ul>
     </div>
   </div>
@@ -129,6 +135,7 @@
         allDestroy();
       }
       clickToggle(400, 10, 'left');
+      setTimeout(autoPlay, cycle);
     }
 
     rightDom.onclick = function () {
@@ -136,6 +143,7 @@
         allDestroy();
       }
       clickToggle(400, 10, 'right');
+      setTimeout(autoPlay, cycle);
     }
 
     function clickAnimate(long, between, dom) {
