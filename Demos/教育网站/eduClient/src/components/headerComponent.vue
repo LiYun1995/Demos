@@ -117,7 +117,7 @@ export default {
 
 <style scoped>
 	.head-box{
-		width:1440px;
+		width:1140px;
 		margin:0px auto;
 		clear: both;
 	}

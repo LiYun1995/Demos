@@ -123,7 +123,7 @@ export default {
 	float: left;
 }
 .footer-content{
-	width: 1440px;
+	width: 1140px;
 	margin: 0px auto;
 	font-size: 14px;
 }

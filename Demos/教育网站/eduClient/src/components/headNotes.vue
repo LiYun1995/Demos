@@ -47,7 +47,7 @@ export default{
 		line-height: 35px;
 	}
 	.head-notes-box{
-		width: 1440px;
+		width: 1140px;
 		margin: 0px auto;
 	}
 	.head-notes-icon{
