@@ -1,0 +1,129 @@
+<div id="applicationBase">
+    <div class="application-base-info">
+        <div class="department">
+            <div class="application-info-item">
+                <span>发起药房:</span>
+                <input id="initiate" class="department-list required-c" disabled style="background: #ffffff;">
+            </div>
+            <div class="application-info-item">
+                <span>接收药库:</span>
+                <input id="accept" class="department-list required-c" disabled style="background: #ffffff;">
+            </div>
+            <div class="application-info-item">
+                <span>需求时间:</span>
+                <input type="text" class="easyui-datetimebox required-c" id="need-time" disabled
+                    style="background: #ffffff;">
+            </div>
+        </div>
+        <div class="classify-list">
+            <span>生成申领单:</span>
+            <ul class="list-name">
+                <li class="list-item">警戒值</li>
+                <li class="list-item">近7天使用量</li>
+                <!--<li class="list-item">同期环比</li>-->
+                <li class="list-item">频次最高</li>
+            </ul>
+        </div>
+    </div>
+    <hr style="border-top:1px solid #A09FA0;border-bottom:1px solid #FFFFFF; margin:0 0 15px 0;">
+    <div class="yaodan-content">
+        <table class="yaodan-table" border="1" borderColor="#FFFFFF">
+            <thead>
+                <tr>
+                    <th>&nbsp;</th>
+                    <th>药品编码</th>
+                    <th>名称</th>
+                    <th>规格</th>
+                    <th>包装</th>
+                    <th>数量</th>
+                    <th>备注</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            <tbody>
+        </table>
+    </div>
+    <div class="audit-info">
+        <div class="audit-info-item">
+            <p>填制人: <span class="make-man"></span></p>
+            <p>填制时间: <span class="make-time"></span></p>
+        </div>
+        <div class="audit-info-item" hidden>
+            <p>审查人: <span class="audit-man"></span></p>
+            <p>审查时间: <span class="audit-time"></span></p>
+        </div>
+        <div class="audit-info-item">
+            <p>摘要: <input type="text" value="" class="digest" readonly style="margin-top:15px;width:1137px"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        $(".EjectMode .describe span").text("查看药品单");
+
+        $(".newInformation").css({ width: "1200px", left: "35%" })
+        $('.common-sure').hide();
+        var configAddress = "http://" + $("body").attr("address");
+
+        var activeID = $(".middleTop .active a").attr("href");
+
+        activeID = activeID.split("_");
+
+        var row = ($("#" + activeID[1]).datagrid('getChecked'))[0];
+        // console.log(row);
+
+        $("#need-time").datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            todayBtn: true,
+            minView: 2
+        });
+        $(".make-man").text(row.createUserName);
+        $(".make-time").text(row.createTime.substr(0, 10));
+        if (row.auditUserName) {
+            $(".audit-man").text(row.auditUserName);
+            $(".audit-time").text(row.auditTime.substr(0, 10));
+            $(".audit-info-item").show();
+        }
+        // 渲染
+        $.ajax({
+            url: configAddress + "/drugApply/drugApplyReceiptEcho",
+            type: "post",
+            dataType: "json",
+            async: "false",
+            data: {
+                "drugApplyReceiptId": row.id
+            },
+            success: function (data) {
+                console.log(data);
+                $("#initiate").val(data.drugApplyReceipt.applyWareHouseName);
+                $("#accept").val(data.drugApplyReceipt.receiveWareHouseName);
+                if (data.drugApplyReceipt.needTime) {
+                    $("#need-time").val(data.drugApplyReceipt.needTime.substr(0, 10));
+                } else {
+                    $("#need-time").val('');
+                }
+                if (data.drugApplyReceipt.drugApplyReceiptDetailsList.length > 0) {
+                    var str = '';
+                    for (var i = 0; i < data.drugApplyReceipt.drugApplyReceiptDetailsList.length; i++) {
+                        var remark = data.drugApplyReceipt.drugApplyReceiptDetailsList[i].remark ? data.drugApplyReceipt.drugApplyReceiptDetailsList[i].remark : ''
+                        str += '<tr class="add-list">' +
+                            '<td class="tag-number">' + (i + 1) + '</td>' +
+                            '<td><input class="bian-ma" type="text" readonly value=' + data.drugApplyReceipt.drugApplyReceiptDetailsList[i].drugCode + '></td>' +
+                            '<td><input type="text" class="drug-name" readonly value=' + data.drugApplyReceipt.drugApplyReceiptDetailsList[i].drugName + '></td>' +
+                            '<td><input type="text" class="specifications" readonly value=' + data.drugApplyReceipt.drugApplyReceiptDetailsList[i].standardName + '></td>' +
+                            '<td><input type="text" class="package" readonly data-id=' + data.drugApplyReceipt.drugApplyReceiptDetailsList[i].drugPackId + ' value=' + data.drugApplyReceipt.drugApplyReceiptDetailsList[i].packName + '></td>' +
+                            '<td><input class="shu-liang" type="number" readonly value=' + data.drugApplyReceipt.drugApplyReceiptDetailsList[i].applyNumber + '></td>' +
+                            '<td><input class="bei-zhu" type="text" readonly value=' + remark + '></td>' +
+                            '</tr>'
+                    }
+                    $(".yaodan-table").prepend(str);
+                    $(".digest").val(data.drugApplyReceipt.digest);
+                }
+            }
+        })
+    })();
+</script>
