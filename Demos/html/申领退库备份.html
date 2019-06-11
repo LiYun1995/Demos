@@ -1,0 +1,219 @@
+<div id="drugWithdrawingBox">
+    <div>
+        <div>
+            <span>退药药房:</span>
+            <select id="dwRefundMedicinePharmacy"></select>
+        </div>
+        <div>
+            <span>返回药房:</span>
+            <select id="dwReturnPharmacy"></select>
+        </div>
+    </div>
+    <hr style="border-top:1px solid #A09FA0;border-bottom:1px solid #FFFFFF; margin:0;">
+    <div id="dwOfTableBox">
+        <div id="dwOfTable"></div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        // $(document).unbind("keyup");
+        $(".EjectMode .describe span").text("药品退库");
+        $(".EjectMode .newInform-zoom").css({ display: "none" });
+        $(".EjectMode .newInform-delete").css({ display: "none" });
+        $(".EjectMode .newInform-storage").css({ display: "none" });
+        var configAddress = "http://" + $("body").attr("address");
+        $(".newInformation").css({ "width": "1100px", "margin-left": "-400px" });
+
+
+        let activeID = $(".middleTop .active a").attr("href");
+        activeID = activeID.split("_");
+        let row = $("#" + activeID[1]).datagrid('getChecked');
+        let myDatas = ""; //该退库单的详情数据
+
+        initdadOfTable();
+        //表格数据查询更新
+        function initdadOfTable() {
+            let myHeadData = [
+                {
+                    "field": "validPeriod",
+                    "title": "效期至",
+                    // 		"width" : "140",
+                    "formatter": (value, row, index) => {
+                        if (row.validPeriod) {
+                            return globalData.formatterDate(row.validPeriod);
+                        }
+                    }
+                },
+                {
+                    "field": "batchNum",
+                    "title": "库存批次",
+                    // 		"width" : "150"
+                },
+                {
+                    "field": "drugName",
+                    "title": "药品",
+                    // 		"width" : "50"
+                },
+                {
+                    "field": "standard",
+                    "title": "规格",
+                    // 		"width" : "60",
+                },
+                {
+                    "field": "canRetiringNumber",
+                    "title": "可退数量",
+                    // 		"width" : "120",
+                    "formatter": (value, row, index) => {
+                        if (row.canRetiringNumber) {
+                            return row.canRetiringNumber + row.packName;
+                        }
+                    }
+                },
+                {
+                    "field": "5",
+                    "title": "退回数量",
+                    // 		"width" : "120",
+                    "formatter": (value, row, index) => {
+                        if (row) {
+                            return "<input type='number' class='dwReturnValue' value='" + row.backNumber + "' backNumber='" + row.backNumber + "' canRetiringNumber='" + row.canRetiringNumber + "' style='width:80px;margin-right:5px;border: 1px solid rgb(107,205,255);'><span>" + row.packName + "</span>";
+                        }
+                    }
+                }
+            ]
+
+            $("#dwOfTable").datagrid({
+                url: configAddress + "/retiring/echoRetiring",
+                method: 'post',
+                queryParams: {
+                    "retiringId": row[0].id
+                },
+                autoRowHeight: false,
+                rownumbers: true,
+                fitColumns: true,
+                singleSelect: true,
+                checkOnSelect: false,
+                selectOnCheck: false,
+                columns: [myHeadData],
+                loadFilter: function (data) {
+                    // console.log(data)
+                    if (!data.error) {
+                        myDatas = data;
+                        return { rows: data.details, total: 1 };
+                    } else {
+                        middleOperation({
+                            "name": "系统",
+                            "id": "System",
+                            "important": "classThree",
+                            "text": "查询失败！"
+                        });
+                        myDatas = "";
+                        return { rows: [], total: 0 };
+                    }
+                },
+                onLoadSuccess: function (data) {
+                    // console.log(data)
+                    if (myDatas != "") {
+                        $("#dwRefundMedicinePharmacy").html("<option value='" + myDatas.retiringReceipt.retirWareHouseId + "'>" + myDatas.retiringReceipt.retirWareHouse + "</option>").prop("disabled", "disabled");
+                        $("#dwReturnPharmacy").html("<option value='" + myDatas.retiringReceipt.backWareHouseId + "'>" + myDatas.retiringReceipt.backWareHouse + "</option>").prop("disabled", "disabled");
+                    }
+
+                    let myData = [];
+                    for (let value of data.rows) {
+                        myData.push(value);
+                    }
+
+                    //处理合并相同批次的药
+                    let myarr = [];
+                    let myindex = [];
+                    for (let i = 0; i < myData.length; i++) {
+                        let myarr2 = [];
+                        myarr2.push(myData[i].drugId);
+                        if (myData[i] != "") {
+                            for (let j = i + 1; j < myData.length; j++) {
+                                if (myData[i].batchNum == myData[j].batchNum) {
+                                    myarr2.push(myData[j].drugId);
+                                    myindex.push(i);
+                                    myData[j] = "";
+                                }
+                            }
+                        }
+                        if (myarr2.length > 1) {
+                            myarr.push(myarr2);
+                        }
+                    }
+                    myindex = arrayToHeavy(myindex);
+                    let myHeads = ["validPeriod", "batchNum", "drugName"]
+                    for (let k = 0; k < myindex.length; k++) {
+                        for (let l = 0; l < myHeads.length; l++) {
+                            $('#dwOfTable').datagrid('mergeCells', {
+                                index: myindex[k],//行的下标
+                                field: myHeads[l], //需合并的行
+                                rowspan: myarr[k].length//需要合并的行数
+                            });
+                        }
+                    }
+                }
+            });
+        }
+
+        $(".EjectMode").on("blur", ".dwReturnValue", function () {
+            let canRetiringNumber = $(this).attr("canRetiringNumber");
+            let backNumber = $(this).attr("backNumber");
+            let myVal = $(this).val();
+            if (myVal != "") {
+                if (Number(myVal) > Number(canRetiringNumber)) {
+                    $(this).val(backNumber);
+                }
+            }
+        });
+
+        $(".common-sure").click(function () {
+            $("#dwRefundMedicinePharmacy,#dwReturnPharmacy").removeAttr("disabled");
+            let retirWareHouseId = $("#dwRefundMedicinePharmacy").val();   //退药药房Id
+            let backWareHouseId = $("#dwReturnPharmacy").val();   //返回药房Id
+            let stockIds = [];    //库存ids
+            let numbers = [];  //退回数量
+            let allRows = $("#dwOfTable").datagrid("getRows");
+            for (let i = 0; i < allRows.length; i++) {
+                stockIds.push(allRows[i].stockId);
+            }
+            for (let j = 0; j < $(".dwReturnValue").length; j++) {
+                let myVal = $(".dwReturnValue").eq(j).val();
+                if (myVal == "") {
+                    myVal = 0;
+                }
+                numbers.push(myVal);
+            }
+
+            let myDatas = {
+                "retiringId": row[0].id,
+                "retirWareHouseId": retirWareHouseId,
+                "backWareHouseId": backWareHouseId,
+                "stockIds": stockIds,
+                "numbers": numbers
+            }
+            connect("/retiring/saveOrUpdateretiring", myDatas, function (data) {
+                if (data.error) {
+                    middleOperation({
+                        "name": "系统",
+                        "id": "System",
+                        "important": "classThree",
+                        "text": data.message
+                    });
+                } else {
+                    middleOperation({
+                        "name": "系统",
+                        "id": "System",
+                        "important": "classOne",
+                        "text": data.message
+                    });
+                    $(".EjectMode").remove();
+                    $("#" + ActiveID[1]).datagrid('reload');
+                }
+
+            }, function (err) { console.log(err) });
+        });
+    })();
+
+</script>
