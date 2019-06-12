@@ -1,0 +1,218 @@
+<div id="patientBackMedQuery" style="padding:15px">
+    <div>
+        <span>退药日期:</span>
+        <div class="Inform-input input-group date form_datetime time">
+            <input type="text" name="birthday" class="zxDate" />
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+        </div>
+        <span>-</span>
+        <div class="Inform-input input-group date form_datetime time">
+            <input type="text" name="birthday" class="zxDate" />
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+        </div>
+    </div>
+    <hr style="border-top:1px solid #A09FA0;border-bottom:1px solid #FFFFFF; margin:10px;">
+    <div class="lookTable-info">
+        <div style="border:1px solid grey">
+            <div id="lookTable-info">
+            </div>
+        </div>
+    </div>
+    <hr style="border-top:1px solid #A09FA0;border-bottom:1px solid #FFFFFF; margin:10px;">
+    <div class="lookTable-drug">
+        <div style="border:1px solid grey">
+            <div id="lookTable-drug">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        // $(document).unbind("keyup");
+        $(".EjectMode .describe span").text("患者退药查询");
+        $(".EjectMode .newInform-zoom").css({ display: "none" });
+        $(".EjectMode .newInform-delete").css({ display: "none" });
+        $(".EjectMode .newInform-storage").css({ display: "none" });
+        var configAddress = "http://" + $("body").attr("address");
+        $(".newInformation").css({ "width": "1100px", "margin-left": "-400px" });
+        let activeID = $(".middleTop .active a").attr("href");
+        activeID = activeID.split("_");
+
+        //日期选择器
+        $('.form_datetime').datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd hh:ii",
+            autoclose: true,
+            todayBtn: true,
+            minuteStep: 1
+        });
+       //获取日期  时间 $("#startTime").data("datetimepicker").getDate()
+        initLookTable("2018","2019");
+        function initLookTable(start, end) {
+            var postData = {
+                'startTime': start,
+                'endTime': end,
+            };//请求参数
+            $("#lookTable-info").datagrid({
+                height: 160,
+                url: configAddress + '/backpill/findBackPillByTime',
+                method: 'post',
+                queryParams: postData,
+                autoRowHeight: false,
+                fitColumns: true,
+                rownumbers: true,
+                singleSelect: true,
+                checkOnSelect: false,
+                selectOnCheck: false,
+                columns: [
+                    [{
+                        field: 'diseassArea', title: '退药病区'
+                    }, {
+                        field: 'backWareHouse', title: '退回药房'
+                    }, {
+                        field: 'status', title: '状态',
+                        formatter: function (value, row, index) {
+                            switch (value) {
+                                case 1:
+                                    return '已退药';
+                                case 0:
+                                    return '未退药';
+                            }
+                        }
+                    }, {
+                        field: 'backUser', title: '退药人'
+                    }, {
+                        field: 'backTime', title: '退药时间'
+                    }, {
+                        field: 'totalPrice', title: '总价'
+                    }, {
+                        field: 'detailsNumber', title: '笔数'
+                    }]
+                ],
+                loadFilter: function (gridData) {
+                    if (gridData.error) {
+                        middleOperation({
+                            "name": "系统",
+                            "id": "System",
+                            "important": "classThree",
+                            "text": "[系统] 未查询到申请单数据。"
+                        });
+                        return { "rows": [] };
+                    } else {
+                        if (gridData.rows.length > 0) {
+                            return { "rows": gridData.rows };
+                        } else {
+                            return [];
+                        }
+                    }
+                },
+                onClickRow: function (rowIndex, rowData) {
+                    initDrugInfo(rowData.id)
+                },
+                onLoadSuccess: function (data) {
+
+                }
+            });
+        }
+
+        function initDrugInfo(id) {
+            var postData = {
+                'backId': id  //单据ID
+            };//请求参数
+            $("#lookTable-drug").datagrid({
+                height: 460,
+                url: configAddress + '/backpill/findBackDetailsById',
+                method: 'post',
+                queryParams: postData,
+                autoRowHeight: false,
+                fitColumns: true,
+                rownumbers: true,
+                singleSelect: true,
+                checkOnSelect: false,
+                selectOnCheck: false,
+                columns: [
+                    [{
+                        field: 'drugName', title: '编号'
+                    }, {
+                        field: 'patientName', title: '患者'
+                    }, {
+                        field: 'productBatchNum', title: '床位号' //没找到
+                    },
+                    {
+                        field: 'patientSex', title: '性别'
+                    },
+                    {
+                        field: 'patientAge', title: '年龄'
+                    },
+                    {
+                        field: 'workingGroup', title: '开具科室'
+                    },
+                    {
+                        field: 'doctor', title: '开具医师'
+                    },
+                    {
+                        field: 'drug', title: '药品名称'
+                    },
+                    {
+                        field: 'productBatchNum', title: '规格' //没找到
+                    },
+                    {
+                        field: 'price', title: '单价'  
+                    },
+                    {
+                        field: 'productBatchNum', title: '单位' //没找到
+                    },
+                    {
+                        field: 'drugUseUsage', title: '用法'
+                    },
+                    {
+                        field: 'batchNum', title: '库存批次'
+                    },
+                    {
+                        field: 'productBatchNum', title: '生产批次' //没找到
+                    },
+                    {
+                        field: 'creationTime', title: '有效期',
+                        formatter: function (value, row, index) {
+                            if (value) {
+                                return value.split(" ")[0];
+                            }
+                        }
+                    },
+                    {
+                        field: 'backNumber', title: '退药量'
+                    },
+                    {
+                        field: 'productBatchNum', title: '退费金额'
+                    }]
+                ],
+                loadFilter: function (gridData) {
+                    if (gridData.error) {
+                        middleOperation({
+                            "name": "系统",
+                            "id": "System",
+                            "important": "classThree",
+                            "text": "[系统] 未查询到申请单数据。"
+                        });
+                        return { "rows": [] };
+                    } else {
+                        if (gridData.rows.length > 0) {
+                            return { "rows": gridData.rows };
+                        } else {
+                            return [];
+                        }
+                    }
+                },
+                onLoadSuccess: function (data) {
+
+                }
+            });
+        }
+    })();
+
+</script>

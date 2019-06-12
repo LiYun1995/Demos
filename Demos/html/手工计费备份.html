@@ -1,0 +1,932 @@
+<div id="yzgl-add" class="aloneBilling">
+    <div class="addLeft">
+        <input class="find" type="text" placeholder="请输入患者姓名查找" />
+        <div class="seleBox">
+            <label>
+                <input type="radio" name="type" value="1" checked>
+                <span style="font-weight: 400;">个人</span>
+            </label>
+            <label>
+                <input type="radio" name="type" value="2">
+                <span style="font-weight: 400;">病区</span>
+            </label>
+            <label>
+                <input type="radio" name="type" value="3">
+                <span style="font-weight: 400;">历史</span>
+            </label>
+        </div>
+        <div id="leftTable">
+
+        </div>
+    </div>
+
+    <div class="hideLeft">
+        <div></div>
+    </div>
+
+    <div class="yzgl-add">
+        <div id="PatientMess" style="position: relative">
+            <span class="name bigName">请在左侧选择患者</span>
+            <!--患者基础信息-->
+            <div id="PatientMessBasic" style="height: 55px;display: flex;">
+                <span id="patientName" class="fontSize patientName longNameCompat" style="top: 6px;left: 15px;"></span>
+                <div style="margin: 10px 0 0 50px;">
+                    <div id="basicMessage">
+                        <!--基本信息-->
+                        <div>
+                            <span id="patientSex" class="patientSex"></span>
+                            <span id="patientAge" class="maleft patientAge"></span>
+                            <span id="yibaoType" class="maleft yibaoType"></span>
+                            <span class="maleft">药占比:</span>
+                            <span id="zhanBi" class="zhanBi"></span>
+                        </div>
+                        <div id="money" class="money">
+                            <span>可用</span>
+                            <span id="keYong" class="keYong"></span>
+                            <span style="color: red">余额</span>
+                            <span style="color: red" id="shengYu" class="shengYu"></span>
+                        </div>
+                    </div>
+                    <div id="diagnoseMessage" style="margin-top: 5px;width: 100%;">
+                        <!--诊断信息-->
+                        <div>
+                            <span>初步诊断:</span>
+                            <span id="zhenduanType" class="zhenduanType" style="color: red"></span>
+                            <span id="zhenduan" class="zhenduan"></span>
+                        </div>
+                        <div class="linChuangBox" style="margin-left: 50px">
+                            <img src="resources/images/linchuang.png" alt="">
+                            <span id="linChuang" class="linChuang"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr style="border-top:1px solid #A09FA0;border-bottom:1px solid #FFFFFF; margin:0;">
+            <div id="zhuYuanPatientMess" style="padding-top: 15px;padding-bottom: 15px;height: 73px;">
+                <!--患者住院信息-->
+                <div>
+                    <span id="bedNumber" class="fontSize bedNumber"></span>
+                </div>
+                <div style="margin-left: 50px;">
+                    <div>
+                        <span>住院号:</span>
+                        <span id="zhuYuanNumber" class="zhuYuanNumber"></span>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <span>入院时间:</span>
+                        <span id="ruYuanTime" class="ruYuanTime"></span>
+                    </div>
+                </div>
+                <div style="margin-left: 50px;">
+                    <div>
+                        <span>科室/医师:</span>
+                        <span id="keShi" class="keShi"></span>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <span>病区/护士:</span>
+                        <span id="huShi" class="huShi"></span>
+                    </div>
+                </div>
+            </div>
+            <hr style="border-top:1px solid #A09FA0;border-bottom:1px solid #FFFFFF; margin:0;">
+        </div>
+        <div id="tabBox">
+            <table>
+                <thead>
+                    <tr>
+                        <th>项目</th>
+                        <th>规格</th>
+                        <th>数量</th>
+                        <th>单位</th>
+                        <th>单价</th>
+                        <th>总价</th>
+                        <th>费用类型</th>
+                        <th>时间</th>
+                        <th>开单科室</th>
+                        <th>开单医生</th>
+                        <th>所在病区</th>
+                        <th>执行科室</th>
+                        <th>备注</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="inputSty inputMyXG">
+                        <td class="xmBox">
+                            <input class="xm" type="text" />
+                            <span class="hide"></span>
+                            <div class="projectDiv"></div>
+                        </td>
+                        <td class="eisStaName"></td>
+                        <td>
+                            <input min="0" class="numberXG" type="number" /><span class="hide"></span>
+                        </td>
+                        <td><span class="dwXG"></span></td>
+                        <td><input class="djXZ" data-id="1" type="text" /><span class="hide"></span></td>
+                        <td><input class="zj" type="text" readonly /><span class="hide"></span></td>
+                        <td class="typeXG"></td>
+                        <td>
+                            <span class="hide"></span>
+                            <div class="common-layout MustInput">
+                                <div class="Inform-input input-group date form_datetime time">
+                                    <input type="text" name="birthday" class="zxDate" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="wgName"></td>
+                        <td><select class="kdys" name="dept"></select><span class="hide"></span></td>
+                        <td class="bingqu"></td>
+                        <td><select class="zxks" name="dept"></select><span class="hide"></span></td>
+                        <td><input class="costMark" type="text" /><span class="hide"></span></td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+
+        $(".EjectMode .describe span").text("单独计费");
+        var configAddress="http://"+$("body").attr("address");
+        var PatientValidate = new Verification();
+        $(".newInformation").css({"width":"1196px","margin-left":"-550px"});
+        var activeID = $(".middleTop .active a").attr("href");
+        activeID = activeID.split("_");
+        var row = $("#" + activeID[1]).datagrid('getChecked');
+        var chooseBlockView = $(".patientBlockView .chooseBedAndPatient").length;
+
+        var leftRow = $(".divTable").treegrid("getSelected");
+        $("#PatientMessBasic,#zhuYuanPatientMess").hide();
+        console.log(SystemTime(1))
+        var clickIndex;
+        var startTime = '';
+        var patienId="",diseassAreaId,cId;
+        var wgId = '',diseassAreaName = '',wgName = '',clinicId = '';
+        if (row.length == 1) {
+            patienId = row[0].patientId;
+            diseassAreaId = row[0].diseassAreaId;
+            cId = row[0].clinicId;
+            clinicId = row[0].clinicId;
+            patientMess(cId);
+        }
+        addCode();
+        //    默认选中病区
+        $("input[value='2']").click();
+
+        var getSelections = $(".divTable").treegrid('getSelections');
+        var getLen = getSelections.length
+        if (chooseBlockView == 1 ) {
+            // patienId = $(".patientBlockView .chooseBedAndPatient .patientMsg").attr("id");
+            patienId = $(".patientBlockView .chooseBedAndPatient").attr("data-id");
+            cId = $(".patientBlockView .chooseBedAndPatient").attr("data-name");
+            clinicId = $(".patientBlockView .chooseBedAndPatient").attr("data-name");
+            diseassAreaId = $(".patientBlockView .chooseBedAndPatient .bedMsg p").attr("id");
+            // cId = $(".patientBlockView .chooseBedAndPatient").attr("data-name");
+            patientMess(cId);
+            connect("/config/getNewDate","",function(data){
+                startTime = data.date;
+            });
+        }else if(getLen == 1) {
+            patienId = getSelections[0].patientId
+            cId = getSelections[0].clinicId
+            clinicId = getSelections[0].clinicId
+            diseassAreaId = getSelections[0].diseassAreaId
+            patientMess(cId);
+            connect("/config/getNewDate","",function(data){
+                startTime = data.date;
+            });
+        }
+        //执行处治执行的*******
+        getLeftData(2);
+
+        //日期选择器
+        $('.form_datetime').datetimepicker({
+            language: 'zh-CN',
+            format: "yyyy-mm-dd hh:ii",
+            autoclose: true,
+            todayBtn: true,
+            minuteStep:1
+        });
+
+
+        //左边块的隐藏
+        var leftshow = 1;
+        $('.hideLeft').on('click',function () {
+            if(leftshow){
+                $('.hideLeft > div').css('background-position','-33px 0');
+                $('.addLeft').animate({
+                    width:'0px',
+                    padding:'0px'
+                },200);
+                leftshow = 0;
+            }else{
+                $('.hideLeft > div').css('background-position','-96px 0');
+                $('.addLeft').animate({
+                    width:'180px',
+                    padding:'15px 2.5px 5px'
+                },200);
+                leftshow = 1;
+            }
+        });
+        //输入框输入
+        $('.find').on('input propertychange',function () {
+            let type = $('.addLeft .seleBox input[name="type"]:checked').val();
+            getLeftData(type);
+        });
+        //点击个人or病区or历史
+        $('.addLeft .seleBox input').on('click',function () {
+            var type = $('.addLeft .seleBox input[name="type"]:checked').val();
+            getLeftData(type);
+        });
+        //初始化左侧患者列表表格 -- leftTable
+        function getLeftData(t) {
+            var _url = '/performDoctorAdvice/findPatientsByUserId';//接口路径
+            var postData = {};//请求参数
+            var _name = $('.find').val() || '';//关键词
+            if(t == 1){
+                _url = '/performDoctorAdvice/findPatientsByUserId';
+                postData = {
+                    patientName:_name
+                }
+            }else if(t == 2){
+                _url = '/performDoctorAdvice/findPatientByIdAndName';
+                postData = {
+                    patientName:_name
+                }
+            }else if(t == 3){
+                _url = '/performDoctorAdvice/findPatientByDisAreIdAndName';
+                postData = {
+                    patientName:_name
+                }
+            }
+
+            var headDatas = [
+                {
+                    "field" : "bedName",
+                    "title" : "床位名称",
+                    "formatter": function(value,row,index){
+                        if(row.consult == 1){
+                            return "<div class='triangleDiv'><div class='triangle'><img src='resources/img/hui.png' class='yzImg'></div><p>"+(row.bedName || '')+"</p></div>"
+                        }else{
+                            return row.bedName || ''
+                        }
+                    }
+                },
+                {
+                    "field" : "patientName",
+                    "title" : "患者姓名",
+                    "align" : "left"
+                },
+                 {
+                    "field" : "sex",
+                    "title" : "性别"
+                },
+                {
+                    "field" : "patientAge",
+                    "title" : "年龄"
+                },
+                {
+                    "field" : "conditionName",
+                    "title" : "状态"
+                }
+            ];
+            $('#leftTable').treegrid({
+                url: configAddress + _url,
+                idField:'clinicId',
+                treeField:'patientName',
+                lines:true,
+                method: 'post',
+                height: 640,
+                autoRowHeight:false,
+                queryParams:postData,
+                fitColumns: true,
+                singleSelect: true,
+                frozenColumns: [],
+                columns: [headDatas],
+                loadFilter: function (gridData) {
+                    if(gridData.error == true){
+                        return [];
+                    }
+                    if (gridData.rows.length  == 0) {
+                        return gridData;
+                    }else{
+                        return gridData;
+                    }
+                },
+                onClickRow:function (rowData) {
+                    if ($(".xm").eq(0).val() != "") {
+                        if (confirm("当前存在费用是否放弃保存？")) {
+                            patienId = rowData.patientId;
+                            clinicId = rowData.clinicId;
+                            patientMess(clinicId);
+                            let trs = $("#tabBox tbody tr");
+                            for(let i = 0;i < trs.length - 1;i ++) {
+                                trs.eq(i).remove();
+                            }
+                        }else {
+                            $('#leftTable').treegrid("unselectAll");     //清空所有行
+                            $('#leftTable').treegrid("select",patienId);     //选中之前行..
+                        }
+                    }else {
+                        patienId = rowData.patientId;
+                        clinicId = rowData.clinicId;
+                        patientMess(clinicId);
+                    }
+                    connect("/config/getNewDate","",function(data) {
+                        startTime = data.date;
+                    });
+                },
+                onLoadSuccess:function(row,data) {
+                    var allRows = $("#" + activeID[1]).datagrid("getRows");//所有数据
+                    let index = 0,indexNumber = "";
+                    let myClinicId = "" ;
+                    var myDiv = $(".patientBlockView > div");
+                    for(var i=0;i<myDiv.length;i++) {
+                        if($(myDiv[i]).hasClass("chooseBedAndPatient")) {
+                            // console.log($(myDiv[i]));
+                            indexNumber = i;//方块视图选中的方块下标
+                            index++;//选中的方块数量
+                        }
+                    }
+                    if(allRows.length == 1) {
+                        myClinicId = allRows[0].clinicId;
+                    }else if(index == 1) {
+                        // myClinicId = allRows[indexNumber].clinicId;
+                        myClinicId = $(".patientBlockView .chooseBedAndPatient").attr("data-name");
+                    }else if(!$.isEmptyObject(leftRow)) {
+                        myClinicId = leftRow.clinicId;
+                    }
+                    var nowTables = data;  //患者列表
+                    // console.log(data);
+                    if(myClinicId != "") {
+                        $.each(nowTables,function(index,value) {
+                            // console.log(value.clinicId)
+                            if(value.clinicId == myClinicId) {
+                                $('#leftTable').treegrid("select",value.patientId);
+                                //   onClickRow
+                            }
+                        })
+                    }
+                }
+            });
+        }
+        //根据患者ID查询患者信息
+        function patientMess(clinicId) {
+            $.ajax({
+                type:"post",
+                url:configAddress+"/newBabyReport/queryPatientDataForNewBabyReport",
+                dataType:"JSON",
+                data:{
+                    "clinicId":clinicId
+                },
+                success:function (data) {
+                    if(data.error == false) {
+                        wgId = data.patient.workGroupId;
+                        wgName = data.patient.workGroupName || '';
+                        diseassAreaName = data.patient.diseassAreaName || '';
+                        $("#PatientMess .bigName").hide();
+                        $("#PatientMessBasic,#zhuYuanPatientMess").show();
+                        $(".aloneBilling #patientName").html(data.patient.patientName || '');
+                        $(".aloneBilling #patientName").attr("title",data.patient.patientName || '');
+                        $(".aloneBilling #patientSex").html(data.patient.patientSexName || '');
+                        $(".aloneBilling #patientAge").html(data.patient.patientAge || '');
+                        $(".aloneBilling #yibaoType").html(data.patient.costCategories || '');         // 医保类型
+                        $(".aloneBilling #zhanBi").html(data.patient.drugCostProportion || '');
+
+                        let condition = data.patient.condition || '',
+                                dname = "",
+                                clinicalPathwayName = "";
+                        if(data.patientPathway) {
+                            clinicalPathwayName = data.patientPathway.clinicalPathwayName
+                        }
+                        var a = 0
+                        if(data.patient.diagnosis) {
+                            for(var i = 0;i < data.patient.diagnosis.diagnosisDetails.length;i ++) {
+                                if(data.patient.diagnosis.diagnosisDetails[i].mainDiagnosis == 1) {
+                                    dname = data.patient.diagnosis.diagnosisDetails[i].diagnosisName || ''
+                                    break;
+                                }
+                            }
+                        }
+                        $(".aloneBilling #zhenduanType").html(condition);
+                        $(".aloneBilling #zhenduan").html(dname);
+                        if(!clinicalPathwayName) {
+                            $('.linChuangBox').hide();
+                        }else {
+                            $('.linChuangBox').css("display","inline-block");
+                            $(".aloneBilling #linChuang").html(clinicalPathwayName);
+                        }
+                        
+                        $(".aloneBilling #bedNumber").html(data.patient.bedName || '');
+                        $(".aloneBilling #zhuYuanNumber").html(data.patient.clinicNumber || '');
+                        $(".aloneBilling #ruYuanTime").html(data.patient.joinTime || '');
+
+                        if(data.patient.doctorName) {
+                            $(".aloneBilling #keShi").html((data.patient.workGroupName || "无")+"/"+(data.patient.doctorName || "无"));
+                        }else{
+                            $(".aloneBilling #keShi").html(data.patient.workGroupName || '无');
+                        }
+                        $(".aloneBilling #huShi").html((data.patient.diseassAreaName || "无")+"/"+(data.patient.nurseName || "无"));
+
+                        /*可用= 预交金+担保金-总金额
+                         "patientFunds": - {                //类型：Object  必有字段  备注：患者资金
+                         "acceptingAmount":"mock",                //类型：String  必有字段  备注：患者预交金总额
+                         "useAmount":"mock",                //类型：String  必有字段  备注：患者费用总额
+                         "guaranteeAmount":"mock"                //类型：String  必有字段  备注：患者担保金
+                         }
+                         余额= 预交金-总金额
+                         */
+                        // let keYong = Number(data.patient.patientFunds.acceptingAmount + data.patient.patientFunds.guaranteeAmount - data.patient.patientFunds.useAmount)
+
+                        let shengYu = (Number(data.patient.patientFunds.acceptingAmount)*1000 - Number(data.patient.patientFunds.useAmount)*1000) / 1000;
+                        $(".aloneBilling #keYong").html(data.patient.patientFunds.balance || "0.00");
+                        $(".aloneBilling #shengYu").html(shengYu);
+                        let title = "已预交:"+(data.patient.patientFunds.acceptingAmount || "0.00")+" "+"担保:"+(data.patient.patientFunds.guaranteeAmount || "0.00")+" "+"总金额:"+(data.patient.patientFunds.useAmount || "0.00")
+                        $(".aloneBilling #money").attr("title",title)
+                    } else {
+                        $("#PatientMess .bigName").show();
+                        $("#PatientMessBasic,#zhuYuanPatientMess").hide();
+                    }
+                }
+            })
+        }
+        //查询所有科室
+        function findWorkingGroups(wgId){
+            var _url = configAddress + '/registrationtool/findWorkingGroups';
+            var _optionHtml = '';
+            $.ajax({
+                type: "POST",
+                url: _url,
+                data:{},
+                success: function(msg){
+                    var data = JSON.parse(msg).resultDomains;
+                    for(var i = 0,l = data.length;i < l;i ++){
+                        _optionHtml += '<option value="'+data[i].id+'"'+(wgId == data[i].id ? "selected":null)+'>'+data[i].groupName+'</option>';
+                    }
+                    $('#tabBox .zxks').html(_optionHtml);
+                }
+            });
+        }
+        //根据科室ID查询医生
+        function findDoctorsByWgId() {
+            var _url = configAddress + '/registrationtool/findDoctorsByWgId';
+            var _optionHtml = '';
+            $.ajax({
+                type: "POST",
+                url: _url,
+                data:{
+                    'workGroupId':wgId
+                },
+                success: function(msg){
+                    var data = JSON.parse(msg).rows;
+                    for(var i = 0,l = data.length;i < l;i ++){
+                        _optionHtml += '<option value="'+data[i].id+'">'+data[i].user.name+'</option>';
+                    }
+                    $('#tabBox .kdys').html(_optionHtml);
+                }
+            });
+        }
+        //当输入框获得焦点的时候, 按下回车键执行函数
+        $("#tabBox").on("focus",".xm",function () {
+            $(this).on("keydown",function (e) {
+                that = this;
+                if(e.keyCode == 13) {
+                    e.stopPropagation();
+                    $(document).unbind("keyup");
+                    if(patienId == '') {
+                        middleOperation({
+                            "name": "系统",
+                            "id": "System",
+                            "important": "classThree",
+                            "text": "[系统] 请先选择一个患者。"
+                        });
+                        return -1;
+                    }
+                    drug = $.trim($(that).val());
+                    var _optionHtml = '<div class="topProjectDiv">'+
+                            '<div class="comprehensive">综合</div>'+
+                            '<div class="treatmentXG">诊疗</div>'+
+                            '<div class="scienceMaterial ">材料</div>'+
+                            '<div class="bedXG">床位</div>'+
+                            '</div>'+
+                            '<div class="rightProjectDiv">'+
+                            '<div class="projectDataGrid">'+
+
+                            '</div>'+
+                            '<p>共计<span class="totalProject"></span>条数据</p>'+
+//                                            '</div>'+
+                            '</div>';
+                    $(that).siblings('.projectDiv').html(_optionHtml);
+                    seachProject(drug,0,that);
+                    $(that).blur()
+                    //table统计
+                    //综合
+                    connect("/chargecost/findAllExecuteProject",{"name":drug, "type":0,"clinicId":clinicId},function(data) {
+                        if (data.error == false){
+                            $(that).siblings(".projectDiv").find(".comprehensive").append("<span>("+data.total+")</span>")
+                        }
+                    },function() {},true);
+                    //卫材
+                    connect("/chargecost/findAllExecuteProject",{"name":drug, "type":1,"clinicId":clinicId},function(data) {
+                        if (data.error == false){
+                            $(that).siblings(".projectDiv").find(".scienceMaterial").append("<span>("+data.total+")</span>")
+                        }
+                    },function() {},true);
+                    //诊疗
+                    connect("/chargecost/findAllExecuteProject",{"name":drug, "type":2,"clinicId":clinicId},function(data) {
+                        if (data.error == false){
+                            $(that).siblings(".projectDiv").find(".treatmentXG").append("<span>("+data.total+")</span>")
+                        }
+                    },function() {},true);
+                    //床位
+                    connect("/chargecost/findAllExecuteProject",{"name":drug, "type":3,"clinicId":clinicId},function(data) {
+                        if (data.error == false){
+                            $(that).siblings(".projectDiv").find(".bedXG").append("<span>("+data.total+")</span>")
+                        }
+                    },function() {},true);
+                }
+            })
+        });
+        // 数量enter
+        $("#tabBox").on("focus",".numberXG",function () {
+            $(this).on("keydown",function (e) {
+                if(e.keyCode == 13) {
+                    $(".xm").eq($(".xm").length-1).focus()
+                }
+            })
+        });
+        /*所有input框*/
+        $(".aloneBilling").on("focus","input",function () {
+            $(this).keydown(function (e) {
+                if (e.keyCode == 13 || e.keyCode == 108) {
+                    e.stopPropagation();
+                    $(document).off("keyup");//解绑active.js绑定的回车事件
+                };
+            });
+        });
+        $(".aloneBilling").on("blur","input",function () {
+            $(this).unbind("keydown");
+            addCode();
+        });
+        //document绑定事件
+        function addCode () {
+            $(document).off("keyup");
+            $(document).keyup(function(event) {
+                switch(event.keyCode) {
+                    case 27:$(".EjectMode").remove();
+                    // case 108:$(".common-sure").click();
+                    // case 13:$(".common-sure").click();
+                }
+            });
+        };
+
+        $("#tabBox").on("click",".topProjectDiv > div",function() {
+            let index = $(this).index();
+            $(this).css("border-bottom","white").siblings().css("border-bottom","1px solid rgb(172,175,184");
+            $(this).css("background-color","white").siblings().css("background-color","rgb(231,231,231");
+            
+            if (index == 0) {   //所有
+                seachProject(drug,0,that)
+            }else if (index == 1) {   //诊疗
+                seachProject(drug,2,that)
+            }else if (index == 2) {      //卫材
+                seachProject(drug,1,that)
+            }else if (index == 3) {      //床位
+                seachProject(drug,3,that)
+            }
+        });
+
+        //查询详细信息
+        function seachProject(drug,type,that) {
+            let gridDome = $(that).siblings(".projectDiv").find(".projectDataGrid")
+            gridDome.datagrid({
+                url: configAddress + '/chargecost/findAllExecuteProject',
+                method: 'post',
+                height: 150,
+                autoRowHeight:false,
+                queryParams:{
+                    "name":drug,
+                    "type":type,
+                    "clinicId":clinicId
+                },
+                fitColumns: true,
+                singleSelect: true,
+                frozenColumns: [],
+                columns: [[
+                    {
+                        "field" : "type",
+                        "title" : "类型"
+                    },
+                    {
+                        "field" : "name",
+                        "title" : "名称"
+                    },
+                    {
+                        "field" : "eisStaName",
+                        "title" : "规格"
+                    },
+                    {
+                        "field" : "price",
+                        "title" : "单价"
+                    },
+                    {
+                        "field" : "mark",
+                        "title" : "备注"
+                    }
+                ]],
+
+                loadFilter: function (gridData) {
+                    if(gridData.error == true){
+                        return [];
+                    }
+                    if (gridData.rows != "") {
+                        return gridData;
+                    }else{
+                        return [];
+                    }
+                },
+                onClickRow:function (rowIndex,rowData) {
+                    var had = false;
+                    var doms = $('#tabBox .inputSty');
+                    for(var i = 0,l = doms.length - 1; i < l;i ++) {
+                        var proId = doms.eq(i).find('.xm').attr('data-id');
+                        if(rowData.id == proId) {
+                            had = true;
+                            break;
+                        }
+                    }
+                    if(had == true) {
+                        middleOperation({
+                            "name": "系统",
+                            "id": "System",
+                            "important": "classThree",
+                            "text": "[系统] 请勿选取重复项目。"
+                        });
+                        return -1;
+                    }
+                    //等接口出之后再写..
+                    
+                    $(that).val(rowData.name);   //名称
+                    $(that).attr("data-id",rowData.id);
+                    $(that).attr("data-units",rowData.packName);     //单位
+                    $(that).attr("data-packId",rowData.packId || '');     //包装ID
+                    $(that).attr("data-names",rowData.name || '');        //项目名称
+                    $(that).attr("data-type",rowData.type || '');        //项目类型
+                    $(that).attr("data-cost",rowData.costProjectId);             //收费项目
+                    $(that).parent().siblings("span").html(rowData.name);
+                    $(that).parent().siblings("span").attr("data-id",rowData.id);
+                    $(that).parent('td').siblings('td.eisStaName').html(rowData.eisStaName);
+                    $(that).parent('td').siblings('td.typeXG').html(rowData.type);
+                    $(that).parent('td').siblings('td').find('.numberXG').val(1); // 数量
+                    $(that).parent('td').siblings('td').find('.dwXG').html(rowData.packName);    // 单位
+                    $(that).parent('td').siblings('td').find('.djXZ').val(rowData.price);           // 单价
+                    $(that).parent('td').siblings('td').find('.zj').val(rowData.price);           // 总价
+                    $(that).parent('td').siblings('td').find(".typeXG").html("<span>"+rowData.type+"</span>");           // 费用类型
+                    $('.wgName').html(wgName);
+                    $('.bingqu').html(diseassAreaName);
+                    // var workgroup = rowData.workingGroupId || wgId;
+                    var _optionHtml = '';
+                    $.ajax({
+                        type: "POST",
+                        url: configAddress + '/manualpric/findProExeWorkGroup',
+                        data: {
+                            "workGroupId":wgId,
+                            "proId":rowData.id,
+                            "scope":1
+                        },
+                        dataType: "JSON",
+                        success: function(msg){
+                            var data = msg.proExeWorkGroup || [];
+                            if(data.length > 0) {
+                                for(var i = 0,l = data.length;i < l;i ++) {
+                                    _optionHtml += '<option value="'+data[i].exeWorkGroupId+'"'+(data[i].isDefault == 1 ? "selected":null)+'>'+data[i].exeWorkGroupName+'</option>';
+                                }
+                            }else {
+                                _optionHtml += '<option value="'+ wgId +'">'+ wgName +'</option>';
+                            }
+                            $(that).parent('td').siblings('td').find('.zxks').html(_optionHtml);
+                            // if(rowData.workingGroupId && rowData.workingGroupId != '') {
+                            //     $(that).parent('td').siblings('td').find('.zxks').attr('readonly',true);
+                            // }
+                        }
+                    });
+                    $(that).siblings('.projectDiv').css("visibility","hidden");
+                    var _html = '<tr class="inputSty inputMyXG">'+
+                            '<td class="xmBox">'+
+                            '<input class="xm" type="text" />'+
+                            '<span class="hide"></span>'+
+                            '<div class="projectDiv"></div></td><td class="eisStaName"></td><td><input min="0" class="numberXG" type="number" /><span class="hide"></span></td>'+
+                            '<td><span class="dwXG"></span></td>'+
+                            '<td><input class="djXZ" data-id="1" type="text" /><span class="hide"></span></td>'+
+                            '<td><input class="zj" type="text" readonly/><span class="hide"></span></td>'+
+                            '<td class="typeXG"></td>'+
+                            '<td><span class="hide"></span>'+
+                            '<div class="common-layout MustInput">'+
+                            '<div class="Inform-input input-group date form_datetime time">'+
+                            '<input type="text" name="birthday" class="zxDate"/>'+
+                            '<span class="input-group-addon">'+
+                            '<span class="glyphicon glyphicon-calendar"></span>'+
+                            '</span></div></div></td>'+
+                            '<td class="wgName"></td>'+
+                            '<td><select class="kdys" name="dept"></select><span class="hide"></span></td>'+
+                            '<td class="bingqu"></td>'+
+                            '<td><select class="zxks" name="dept"></select><span class="hide"></span></td>'+
+                            '<td><input class="costMark" type="text"/></td></tr>';
+                    $('#tabBox>table>tbody').append(_html);
+                    //请求系统时间
+                    // connect("/config/getNewDate","",function(data){
+                    //     $(".zxDate").val(startTime);
+                    // });
+                    var upTime = $(that).parents('tr').prev().find(".zxDate").val() || '';
+                    $(that).parent('td').siblings('td').find(".zxDate").val(upTime || startTime);
+                    $('.form_datetime').datetimepicker({
+                        language: 'zh-CN',
+                        format: "yyyy-mm-dd hh:ii",
+                        autoclose: true,
+                        todayBtn: true,
+                        minuteStep:1
+                    });
+                    findDoctorsByWgId();   //根据科室ID查询医生
+                },
+                onLoadSuccess:function(data){
+                    $('.projectDiv').css("visibility","hidden");
+                    $(that).siblings('.projectDiv').css("visibility","visible");
+                    $(that).siblings('.projectDiv').find(".totalProject").html(data.total);
+                    gridDome.datagrid("selectRow",0)
+                    addDrugsCodes(gridDome,that);
+                }
+            });
+        }
+        //搜索药品的弹出框快捷键
+        function addDrugsCodes(grid,searInp) {
+            $(document).unbind("keyup");
+            $(document).keyup(function (event) {
+                let myselectRow = grid.datagrid('getSelected');
+                let myselectRowIndex = grid.datagrid('getRowIndex',myselectRow);
+                let allRowslength = grid.datagrid('getRows').length;
+    
+                switch (event.keyCode) {
+                    case 38:
+                        let myIndex = myselectRowIndex - 1;
+                        if(myIndex < 0) {
+                            myIndex = allRowslength - 1;
+                        }
+                        grid.datagrid("selectRow",myIndex)
+                        break;
+                    case 40:
+                        let myIndex1 = myselectRowIndex + 1;
+                        if(myIndex1 >= allRowslength) {
+                            myIndex1 = 0;
+                        }
+                        grid.datagrid("selectRow",myIndex1)
+                        break;
+                    case 13:
+                        let idx = 0;
+                        for(let i = 0;i < $(".projectDiv").length;i ++) {
+                            if($(".projectDiv").eq(i).css("visibility") == "visible") {
+                                idx = i;
+                                break;
+                            }
+                        }
+                        $(".projectDiv").eq(idx).find(".datagrid-row-selected").click();
+                        $(searInp).parents("tr").find(".numberXG").focus();
+                        addCode();
+                        break;
+                }
+            });
+        }
+        //点击确定 提交当前计费
+        function clickSure() {
+            var _url = configAddress + '/chargecost/saveCostByProject';
+            //执行项目、数量、单价、单位、时间
+            let proIds = [],nums = [],prices=[],units = [],dates=[],doctors=[],costProjectIds=[],disposalGroups=[],names=[],marks=[],types = [],packIds = [];
+//            var doms = $('#tabBox>table .inputSty');
+//            for(var i = 0,l = doms.length - 1; i < l;i ++){
+//                var num = doms.eq(i).find('.numberXG').val();
+//                var _unit = '/' + doms.eq(i).find('.xm').attr('data-units');
+//                if(num.replace(_unit,'') != ""){
+//                    nums.push(num.replace(_unit,''));
+//                    proIds.push(doms.eq(i).find('.xm').attr('data-id'));
+//                    units.push(doms.eq(i).find('.xm').attr('data-units'));
+//                }
+//            }
+            let workingGroups = [];
+            let doms = $("#tabBox > table > tbody > .inputMyXG");
+            for (var i = 0;i < doms.length - 1;i ++){
+                proIds.push(doms.eq(i).find('.xm').attr('data-id'));    //执行项目
+                // console.log(doms.eq(i).find('.numberXG').val());
+                // console.log(doms.eq(i).find(".djXZ").val());
+                nums.push(doms.eq(i).find('.numberXG').val());    //数量
+                prices.push(doms.eq(i).find(".djXZ").val() || '');   //单价
+                if (doms.eq(i).find(".xm").attr("data-units")){
+                    units.push(doms.eq(i).find(".xm").attr("data-units"));     //单位
+                }else {
+                    units.push(" ");     //单位
+                }
+                dates.push(doms.eq(i).find('.zxDate').val() || '');  // 时间
+                doctors.push(doms.eq(i).find('.kdys').val() || '');  // 医生
+                costProjectIds.push(doms.eq(i).find('.xm').attr('data-cost'));  // 收费项目
+                disposalGroups.push(doms.eq(i).find('.zxks').val() || '');  // 执行科室
+                names.push(doms.eq(i).find('.xm').attr('data-names'));  // 项目名称
+                types.push(doms.eq(i).find('.xm').attr('data-type'));  // type
+                packIds.push(doms.eq(i).find('.xm').attr('data-packId'));  // packIds
+                marks.push(doms.eq(i).find('.costMark').val() || ' ');   // 备注
+                workingGroups.push(wgId);
+            }
+            if(proIds.length == 0){
+                middleOperation({
+                    "name": "系统",
+                    "id": "System",
+                    "important": "classThree",
+                    "text": "[系统] 未添加单独计费项目。"
+                });
+                return -1;
+            }
+            if(nums.length == 0){
+                middleOperation({
+                    "name": "系统",
+                    "id": "System",
+                    "important": "classThree",
+                    "text": "[系统] 请填写数量。"
+                });
+                return -1;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: _url,
+                traditional:true,
+                dataType:'JSON',
+                data:{
+                    'proIds':proIds,    //执行项目ID  数组
+                    'nums':nums,        //数量  数组
+                    "prices":prices,    //单价 数组
+                    'units':units,      //单位 数组
+                    'patientId':patienId,   //患者ID
+                    "dates":dates,          //时间
+                    'workingGroups':workingGroups,       //开单科室
+                    "doctors":doctors,      //医生
+                    "costProjectIds":costProjectIds,   //收费项目
+                    'clinicId':clinicId,         //就诊号ID
+                    "disposalGroups":disposalGroups,    //执行科室
+                    "names":names,       //项目名称
+                    "marks":marks,  // 备注
+                    "types":types,  // 类型
+                    "packIds":packIds,  // 包装ID
+                },
+                success: function(msg){
+                    if(msg.error === true) {
+                        middleOperation({
+                            "name": "系统",
+                            "id": "System",
+                            "important": "classThree",
+                             "text": "[系统] " + msg.message
+                        });
+                    }else {
+                        middleOperation({
+                            "name": "系统",
+                            "id": "System",
+                            "important": "classOne",
+                            "text": "[系统] " + msg.message
+                        });
+                        let trs = $("#tabBox tbody tr");
+                        for(let i = 0;i < trs.length - 1;i ++) {
+                            trs.eq(i).remove();
+                        }
+                        $("#" + activeID[1]).datagrid('reload');
+                    }
+
+                    // $(".EjectMode").remove();
+
+                }
+            });
+        }
+
+        //点击确定
+        $('.common-sure').on('click',function(){
+            clickSure();
+        });
+
+        //
+        $('#tabBox table').delegate('.numberXG','blur',function() {
+            var num = parseFloat($(this).val() || 0);
+            let index = $(this).parent().parent().index();
+            let money = $("#tabBox table tbody .inputSty").eq(index).find(".djXZ").val() || 0;
+            let zj = (num*1000) * (money*1000) / 1000000;
+            $(this).parent().siblings('td').find('.zj').val(zj);
+        })
+        $('#tabBox table').delegate('.djXZ','blur',function() {
+            var money = parseFloat($(this).val() || 0);
+            let index = $(this).parent().parent().index();
+            let num = $("#tabBox table tbody .inputSty").eq(index).find(".numberXG").val() || 0;
+            let zj = (num*1000) * (money*1000) / 1000000;
+            $(this).parent().siblings('td').find('.zj').val(zj);
+        })
+    })();
+
+</script>
