@@ -1,18 +1,22 @@
 <div id="patientBackMedQuery" style="padding:15px">
     <div>
-        <span>退药日期:</span>
-        <div class="Inform-input input-group date form_datetime time">
-            <input type="text" name="birthday" class="zxDate" />
-            <span class="input-group-addon">
-                <span class="glyphicon glyphicon-calendar"></span>
-            </span>
+        <span style="float:left;margin-top:3px;margin-right: 9px;">退药日期：</span>
+        <div style="width: 15%;display:inline-block;float:left;">
+            <div class="Inform-input input-group date form_datetime time">
+                <input type="text" name="birthday" class="stDate" />
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
         </div>
-        <span>-</span>
-        <div class="Inform-input input-group date form_datetime time">
-            <input type="text" name="birthday" class="zxDate" />
-            <span class="input-group-addon">
-                <span class="glyphicon glyphicon-calendar"></span>
-            </span>
+        <span style="float: left;margin: 0 10px;">—</span>
+        <div style="width: 15%;display:inline-block">
+            <div class="Inform-input input-group date form_datetime time">
+                <input type="text" name="birthday" class="endDate" />
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
         </div>
     </div>
     <hr style="border-top:1px solid #A09FA0;border-bottom:1px solid #FFFFFF; margin:10px;">
@@ -50,19 +54,23 @@
             autoclose: true,
             todayBtn: true,
             minuteStep: 1
+        }).on('changeDate', function (e) {
+            timeToQuery();
         });
-       //获取日期  时间 $("#startTime").data("datetimepicker").getDate()
-        initLookTable("2018","2019");
-        function initLookTable(start, end) {
-            var postData = {
-                'startTime': start,
-                'endTime': end,
-            };//请求参数
+
+        function timeToQuery() {
+            let start = $('.stDate').val()
+            let end = $('.endDate').val()
+            if (start && end) {
+                timeTableQuery(start, end);
+            }
+        }
+        //获取日期  时间 $("#startTime").data("datetimepicker").getDate()
+        initLookTable()
+        initDrugInfo()
+        function initLookTable() {
             $("#lookTable-info").datagrid({
                 height: 160,
-                url: configAddress + '/backpill/findBackPillByTime',
-                method: 'post',
-                queryParams: postData,
                 autoRowHeight: false,
                 fitColumns: true,
                 rownumbers: true,
@@ -71,6 +79,8 @@
                 selectOnCheck: false,
                 columns: [
                     [{
+                        field: 'number', title: '编号'
+                    }, {
                         field: 'diseassArea', title: '退药病区'
                     }, {
                         field: 'backWareHouse', title: '退回药房'
@@ -112,7 +122,7 @@
                     }
                 },
                 onClickRow: function (rowIndex, rowData) {
-                    initDrugInfo(rowData.id)
+                    drugTableQuery(rowData.id)
                 },
                 onLoadSuccess: function (data) {
 
@@ -120,15 +130,9 @@
             });
         }
 
-        function initDrugInfo(id) {
-            var postData = {
-                'backId': id  //单据ID
-            };//请求参数
+        function initDrugInfo() {
             $("#lookTable-drug").datagrid({
                 height: 460,
-                url: configAddress + '/backpill/findBackDetailsById',
-                method: 'post',
-                queryParams: postData,
                 autoRowHeight: false,
                 fitColumns: true,
                 rownumbers: true,
@@ -137,11 +141,9 @@
                 selectOnCheck: false,
                 columns: [
                     [{
-                        field: 'drugName', title: '编号'
-                    }, {
                         field: 'patientName', title: '患者'
                     }, {
-                        field: 'productBatchNum', title: '床位号' //没找到
+                        field: 'bedName', title: '床位号'
                     },
                     {
                         field: 'patientSex', title: '性别'
@@ -159,13 +161,13 @@
                         field: 'drug', title: '药品名称'
                     },
                     {
-                        field: 'productBatchNum', title: '规格' //没找到
+                        field: 'standard', title: '规格'
                     },
                     {
-                        field: 'price', title: '单价'  
+                        field: 'price', title: '单价'
                     },
                     {
-                        field: 'productBatchNum', title: '单位' //没找到
+                        field: 'drugPack', title: '单位'
                     },
                     {
                         field: 'drugUseUsage', title: '用法'
@@ -174,7 +176,7 @@
                         field: 'batchNum', title: '库存批次'
                     },
                     {
-                        field: 'productBatchNum', title: '生产批次' //没找到
+                        field: 'productBatchNum', title: '生产批次'
                     },
                     {
                         field: 'creationTime', title: '有效期',
@@ -188,7 +190,10 @@
                         field: 'backNumber', title: '退药量'
                     },
                     {
-                        field: 'productBatchNum', title: '退费金额'
+                        field: 'backSinCount', title: '退费金额',
+                        formatter: function (value, row, index) {
+                            return row.price * row.backNumber
+                        }
                     }]
                 ],
                 loadFilter: function (gridData) {
@@ -212,6 +217,25 @@
 
                 }
             });
+        }
+        function timeTableQuery(start, end) {
+            var postData = {
+                'startTime': start,
+                'endTime': end,
+            };//请求参数
+            $("#lookTable-info").datagrid({
+                url: configAddress + '/backpill/findBackPillByTime',
+                queryParams: postData
+            })
+        }
+        function drugTableQuery(id) {
+            var postData = {
+                'backId': id  //单据ID
+            };//请求参数
+            $("#lookTable-drug").datagrid({
+                url: configAddress + '/backpill/findBackDetailsById',
+                queryParams: postData
+            })
         }
     })();
 
