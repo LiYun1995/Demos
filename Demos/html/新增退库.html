@@ -1,0 +1,514 @@
+<script>
+    (function () {
+
+        $(".EjectMode .describe span").text("新增药品退库单");
+
+        var configAddress="http://"+$("body").attr("address");
+        var PatientValidate = new Verification();
+        $(".newInformation").css({"width":"1200px","margin-left":"-600px"});
+        $("input[type=text]").attr("autocomplete","off");
+       //查询退药药房
+        // connect("/stock/findWareHouseByUserId",{},function(data){
+        connect("/stock/findWarehouseByContent",{"typeIds":["ef6c05226197430f96326b2c6f2a681f"]},function(data){
+            let mySelsects = "";
+            if(!data.error){
+                for(let value of data.rows){
+                    mySelsects += "<option value='"+ value.id +"'>"+ value.name +"</option>";    
+                }
+                $("#dwRefundMedicinePharmacy").append(mySelsects);
+                $("#dwRefundMedicinePharmacy>option[value='e4dfcd95764b41cabd842c757c0c9b68']").prop("selected","selected");
+            }else{
+                middleOperation({
+                    "name": "系统",
+                    "id": "System",
+                    "important": "classThree",
+                    "text": "退药药房查询失败！"
+                });
+            }
+        },function(err){console.log(err)},false);
+        
+        //查询返回药房
+        // connect("/allocationli/findAllPharmacy",{},function(data){
+        connect("/stock/findWarehouseByTypeIdsAndContent",{"typeIds":["8eb5a7a52ded4eec8f4958ce5803f3ea"]},function(data){
+            let mySelsects = "";
+            if(!data.error){
+                for(let value of data.rows){
+                    mySelsects += "<option value='"+ value.id +"'>"+ value.name +"</option>";    
+                }
+                $("#dwReturnPharmacy").append(mySelsects);
+            }else{
+                middleOperation({
+                    "name": "系统",
+                    "id": "System",
+                    "important": "classThree",
+                    "text": "返回药房查询失败！"
+                });
+            }
+        },function(err){console.log(err)},false);
+        /*初始化新增表格*/
+        var addHeadData = [
+            {
+                "field" : "shift",
+                "title" : "操作",
+                "width" : 50
+            },
+            {
+                "field" : "drugCode",
+                "title" : "编码",
+                "width" : 150
+            },
+            {
+                "field" : "drugName",
+                "title" : "名称",
+                "width" : 150
+            },
+            {
+                "field" : "standard",
+                "title" : "规格",
+                "width" : 90
+            },
+            {
+                "field" : "batchNum",
+                "title" : "库存批次",
+                "width" : 100
+            },
+            {
+                "field" : "productBatchNum",
+                "title" : "生产批次",
+                "width" : 100
+            },
+            {
+                "field" : "validPeriod",
+                "title" : "有效期",
+                "width" : 80
+            },
+            {
+                "field" : "canRetiringNumber",
+                "title" : "可退数量",
+                "width" : 60
+            },
+            {
+                "field" : "outNum",
+                "title" : "退回数量",
+                "width" : 60
+            },
+            {
+                "field" : "unitPrice",
+                "title" : "采购单价",
+                "width" : 60
+            },
+            {
+                "field" : "totalPrice",
+                "title" : "采购总价",
+                "width" : 60
+            },
+            {
+                "field" : "lingshouDJ",
+                "title" : "零售单价",
+                "width" : 60
+            },
+            {
+                "field" : "lingshouZJ",
+                "title" : "零售总价",
+                "width" : 60
+            },
+            {
+                "field" : "mark",
+                "title" : "备注",
+                "width" : 90
+            }
+        ];
+        $('#otherOutTable').datagrid({
+            height: 350,
+            autoRowHeight:false,
+            rownumbers: true,
+            singleSelect: true,
+            checkOnSelect: false,
+            selectOnCheck: false,
+            columns: [addHeadData]
+        });
+        /*初始化添加一行*/
+        $('#otherOutTable').datagrid('insertRow', {
+            row: {
+                drugCode: '<input class="putDrugInput" autocomplete="off" />' +
+                '<button class="search" type="button">搜索</button>'
+            }
+        });
+        /*所有input框*/
+        $("#otherOutAll").on("focus","input",function () {
+            $(this).keydown(function (e) {
+                if (e.keyCode == 13 || e.keyCode == 108) {
+                    e.stopPropagation();
+                    $(document).off("keyup");//解绑active.js绑定的回车事件
+                };
+            });
+        });
+        $("#otherOutAll").on("blur","input",function () {
+            $(this).off("keydown");
+            addCode();
+        });
+        //药品输入框回车事件
+        $(".otherOutContent").on("focus",".putDrugInput",function (e) {
+            $(this).keydown(function (e) {
+                var condition = $(this).val();
+                let thisIndex = $(this).parents("tr").index();
+                if(e.keyCode == 13 || e.keyCode == 108) {
+                    getCodeAndName(condition,thisIndex);
+                    e.stopPropagation();//阻止冒泡到body
+                    $(document).off("keyup");//解绑active.js绑定的回车事件
+                }
+            })
+        });
+        //输入框失焦绑定回车事件
+        $(".otherOutContent").on("blur",".putDrugInput",function () {
+            $(this).off("keydown");
+            addCode();
+        });
+        $("#otherOutAll").on("blur","#toObject",function () {
+            $(this).off("keydown");
+            addCode();
+        });
+        function addCode() {
+            $(document).off("keyup");
+            $(document).keyup(function(event){
+                switch(event.keyCode) {
+                    case 27:$(".EjectMode").remove();
+                    case 108:$(".common-sure").click();
+                    case 13:$(".common-sure").click();
+                }
+            });
+        };
+        //点击其他地方隐藏下拉框
+        $(" body").click(function(){
+            $(".chooseDrug").hide();
+            $(".moreClient").hide();
+            $(".chooseWareHousesTree").hide();
+        });
+        //搜索事件
+        $(".otherOutContent").on("click",".search",function (e) {
+            var condition = $(this).prev().val();
+            let thisIndex = $(this).parents("tr").index();
+            getCodeAndName(condition,thisIndex);
+            e.stopPropagation();//阻止冒泡到body
+        });
+
+        //删除行
+        $(".otherOutContent").on("click",".shiftTr",function () {
+            let index = $(this).parents("tr").index();
+            $('#otherOutTable').datagrid('deleteRow', index);
+        });
+
+        //获取药品编码和名称
+        var drugHeadData = [
+            {
+                "field" : "drugName",
+                "title" : "名称",
+                styler : function (value,row,index) {
+                    if (row.vpStatus == -1) { /*过期*/
+                        return "color:'#FD0202'";
+                    } else if (row.vpStatus == 0) { /*有效期大于3个月*/
+                        return "color:black";
+                    } else if (row.vpStatus <= 3) { /*3个月之内*/
+                        return "color:'#029DFF'";
+                    }
+                }
+            },
+            {
+                "field" : "standardCode",
+                "title" : "编码"
+            },
+            {
+                "field" : "barCode",
+                "title" : "条码/包装码"
+            },
+            {
+                "field" : "standard",
+                "title" : "规格"
+            },
+            {
+                "field" : "validPeriod",
+                "title" : "有效期"
+            },
+            {
+                "field" : "productBatchNum",
+                "title" : "生产批次"
+            },
+            {
+                "field" : "canRetiringNumber",
+                "title" : "可退数量"
+            },
+            {
+                "field" : "joinPrice",
+                "title" : "采购价"
+            },
+            {
+                "field" : "retailPrice",
+                "title" : "零售价"
+            }
+        ];
+        function getCodeAndName(condition,thisIndex) {
+            let retirWareHouseId = $("#dwRefundMedicinePharmacy").val();
+            let backWareHouseId = $("#dwReturnPharmacy").val();
+            $(".chooseDrug").show();
+            $(".chooseDrug").css("top",47 + 25*thisIndex +"px");
+            $('.drugTable').datagrid({
+                url: configAddress + "/retiring/findRetiringDrug",
+                method: 'post',
+                height: 300,
+                autoRowHeight:false,
+                queryParams: {
+                    "condition":condition,
+                    "retirWareHouseId":retirWareHouseId,
+                    "backWareHouseId":backWareHouseId,
+                },
+                fitColumns: true,
+                singleSelect: true,
+                checkOnSelect: true,
+                selectOnCheck: false,
+                columns: [drugHeadData],
+                loadFilter: function (gridData) {
+                    if(gridData.error == false) {
+                        if (gridData.rows.length == 0) {
+                            middleOperation({
+                                "name": "系统",
+                                "id": "System",
+                                "important": "classThree",
+                                "text": "[系统] 药品列表信息数据为空。"
+                            });
+                            return {"rows": []}
+                        } else {
+                            return gridData
+                        }
+                    }else{
+                        middleOperation({
+                            "name": "系统",
+                            "id": "System",
+                            "important": "classThree",
+                            "text": "[系统] 药品列表信息数据查询失败。"
+                        });
+                        return {"rows": []}
+                    }
+                },
+                onSelect : function (rowIndex,rowData) {
+                    console.log(rowData)
+                    let rows = $("#otherOutTable").datagrid("getRows");
+                    let isHave = false;
+                    for (let r = 0;r<rows.length-1;r++) {
+                        if ($(".drugCode").eq(r).attr("data-id") == rowData.drugId) {
+                            isHave = true;
+                        }
+                    }
+                    if (isHave) {
+                        middleOperation({
+                            "name": "系统",
+                            "id": "System",
+                            "important": "classThree",
+                            "text": "已选择过该药品，请勿重复选择。"
+                        });
+                    } else {
+                        let obj = {
+                            shift:"<span class='shiftTr'>删除</span>",
+                            drugCode:"<span class='drugCode' data-id='"+rowData.id+"'>"+rowData.standardCode+"</span>",
+                            drugName:rowData.drugName,
+                            standardName:rowData.standard,
+                            barCode:rowData.barCode,
+                            batchNum:"<span class='batchId' data-id='"+rowData.batchId+"'>"+rowData.batchNum+"</span>",
+                            productBatchNum:rowData.productBatchNum,
+                            validPeriod:rowData.validPeriod.substr(0,10),
+                            canRetiringNumber:rowData.canRetiringNumber,
+                            // outNum:"<input type='number' class='numInput' data-num='"+rowData.usableStock+"'/>",
+                            outNum:"<input type='number' class='numInput' data-num='"+rowData.canRetiringNumber+"'/>",
+                            unitPrice:"<span class='unitPrice'>"+rowData.joinPrice+"</span>",
+                            totalPrice:"<span class='totalPriceInput'>"+rowData.totalJoinPrice +"</span>",
+                            lingshouDJ:"<span class='lingshouDJ'>"+rowData.retailPrice+"</span>",
+                            lingshouZJ:"<span class='lingshouZJ'>"+rowData.totalRetailPrice+"</span>",
+                            mark:"<input type='text' class='remark' />"
+                        };
+                        appendTr(obj);
+                        $(".otherOutContent").find(".numInput:last-child").focus();
+                        $(".otherOutContent tbody").scrollTop($(".otherOutContent tbody").height());//控制滚动条下移到底部
+                    }
+                }
+            });
+        };
+        /*单价、出库数量、总价不能为负数*/
+        $(".otherOutContent").on("change","input[type='number']",function () {
+            let thisNum = Number($(this).val());
+            if (thisNum < 0) {
+                middleOperation({
+                    "name": "系统",
+                    "id": "System",
+                    "important": "classThree",
+                    "text": "[系统] 请输入正数。"
+                });
+                $(this).val("");
+            }
+        });
+
+        //计算价格
+        //数量变动
+        $(".otherOutContent").on("blur",".numInput",function () {
+            let tr = $(this).closest("tr");
+            let thisIndex = $(this).parents("tr").index();
+            let stockNum = Number($(this).attr("data-num")); /*最多可用库存数量*/
+            let num = Number($(this).val());
+            let singlPrice = $(".singlPriceInput").eq(thisIndex).val();
+            let totalPrice = $(".totalPriceInput").eq(thisIndex).val();
+            if (Number(num) > Number(stockNum)) {
+                middleOperation({
+                    "name": "系统",
+                    "id": "System",
+                    "important": "classThree",
+                    "text": "[系统] 库存数不够!"
+                });
+                $(this).val(0);
+                $(".totalPriceInput").eq(thisIndex).val("");
+            } 
+            else {
+                if ($(this).val() != ""){
+                    //采购单价
+                    let unitPrice = parseFloat(tr.find(".unitPrice").html());
+                    //采购总金额
+                    tr.find(".totalPriceInput").html(num * unitPrice);
+
+
+                    //零售单价
+                    let retailPrice = parseFloat(tr.find(".lingshouDJ").html());
+                    //采购总金额
+                    tr.find(".lingshouZJ").html(num * retailPrice);
+                }else {
+                    tr.find(".totalPriceInput").html("")
+                    tr.find(".lingshouZJ").html("")
+                }
+            }
+        });
+        // //单价变动
+        $(".otherOutContent").on("blur",".singlPriceInput",function () {
+            let thisIndex = $(this).parents("tr").index();
+            let num = $(".numInput").eq(thisIndex).val();
+            let singlPrice = $(".singlPriceInput").eq(thisIndex).val();
+            let totalPrice = $(".totalPriceInput").eq(thisIndex).val();
+            if (singlPrice != "" && num != "") {
+                $(".totalPriceInput").eq(thisIndex).val(Number(num)*Number(singlPrice));
+            } else if (singlPrice != "" && totalPrice != "") {
+                $(".numInput").eq(thisIndex).val(Number(totalPrice)/Number(singlPrice));
+            }else if (num == "" && totalPrice == "") {
+                $(".numInput").eq(thisIndex).val("");
+                $(".totalPriceInput").eq(thisIndex).val("");
+            }
+        });
+        // //总价变动
+        $(".otherOutContent").on("blur",".totalPriceInput",function () {
+            let thisIndex = $(this).parents("tr").index();
+            let num = $(".numInput").eq(thisIndex).val();
+            let singlPrice = $(".singlPriceInput").eq(thisIndex).val();
+            let totalPrice = $(".totalPriceInput").eq(thisIndex).val();
+            if (totalPrice != "" && singlPrice != "") {
+                $(".numInput").eq(thisIndex).val(Number(totalPrice)/Number(singlPrice));
+            }
+        });
+        /*新增出库数据*/
+        function appendTr(obj) {
+            let newIndex = $('#otherOutTable').datagrid('getRows').length -1;
+            $('#otherOutTable').datagrid('insertRow', {
+                index: newIndex,
+                row: obj
+            });
+            $(".putDrugInput").val("");
+        }
+
+        //点击确认关闭弹框
+        $(".common-sure").on("click",function () {
+            addStockOut();
+        });
+        function addStockOut() {
+            let tabloid,marks;
+            let wareHouseId = $(".chooseWareHouses").val();/*主仓库ID*/
+            // let receiverId = pId; // 领取人id
+            let receiverTime = $("#receiveTime").val(); // 领取时间
+            let totals = [];
+            let totalPrices = [];
+            let detailMarks = [];
+            let batchIds = [];
+            let rows = $("#otherOutTable").datagrid("getRows");
+//            let flag = true;
+            $("#pdAbstract").val() ? tabloid = $("#pdAbstract").val() : tabloid = " "; /*摘要*/
+            $("#pdMark").val() ? marks = $("#pdMark").val() : marks = " "; /*备注*/
+            
+            
+            /*zhaokunpeng*/
+            let retiringId = '';                         //退库单id
+            let retirWareHouseId = $("#dwRefundMedicinePharmacy").val();                    //退药药房id
+            let backWareHouseId = $("#dwReturnPharmacy").val();                    //接收药库id                   
+            let stockIds = [];                          //库存ids
+            let numbers = []                            //退回数量
+            /**/
+            for (let h = 0;h<rows.length - 1;h++) {
+//                $(".numInput").eq(h).val() ? totals.push($(".numInput").eq(h).val()) : flag = false;
+//                $(".totalPriceInput").eq(h).val() ? totalPrices.push($(".totalPriceInput").eq(h).val()) : flag = false;
+                totals.push($(".numInput").eq(h).val())
+                
+                numbers.push($(".numInput").eq(h).val())
+                
+                totalPrices.push($(".lingshouZJ").eq(h).html())
+                $(".remark").eq(h).val() ? detailMarks.push($(".remark").eq(h).val()) : detailMarks.push(" ");
+                batchIds.push($(".batchId").eq(h).attr("data-id"));
+                
+                stockIds.push($(".drugCode").eq(h).attr("data-id"));
+            }
+
+            totals.map(function(item){
+                if (item == "" || item == undefined){
+                    middleOperation({
+                        "name": "系统",
+                        "id": "System",
+                        "important": "classThree",
+                        "text": "[系统] 出库:出库数量还没填写。"
+                    });
+                    return false
+                }
+            });
+
+            // var Data = {
+            //     wareHouseId:wareHouseId,
+            //     batchIds:batchIds,
+            //     totals:totals,
+            //     totalPrices:totalPrices,
+            //     tabloid:tabloid,
+            //     marks:marks,
+            //     detailMarks:detailMarks,
+            //     receiverId:receiverId,
+            //     receiverTime:receiverTime
+            // };
+            
+            var Data = {
+                retiringId:retiringId,
+                retirWareHouseId:retirWareHouseId,
+                backWareHouseId:backWareHouseId,
+                stockIds:stockIds,
+                numbers:numbers
+            }
+            connect("/retiring/saveOrUpdateretiring",Data,function (data) {
+                if (!data.error) {
+                    middleOperation({
+                        "name": "系统",
+                        "id": "System",
+                        "important": "classOne",
+                        "text": "退库成功。"
+                    });
+                } else {
+                    middleOperation({
+                        "name": "系统",
+                        "id": "System",
+                        "important": "classThree",
+                        "text": "退库失败。"
+                    });
+                }
+                var ActiveID=($(".middleTop ul .active a").attr("href")).split("_");
+                $("#"+ActiveID[1]).datagrid('reload');
+                $(".EjectMode").remove();
+            });
+        };
+
+    })();
+</script>   

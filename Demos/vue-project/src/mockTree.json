@@ -1,0 +1,33 @@
+{
+  "data": {
+    "router": [
+      {
+        "path": "testy",
+        "component": "test2/testy",
+        "name": "testy"
+      },
+      {
+        "path": "test1",
+        "component": "test1",
+        "name": "test1"
+      },
+      {
+        "path": "test2",
+        "component": "Layout",
+        "name": "test2",
+        "children": [
+          {
+            "path": "test222",
+            "name": "test2-1",
+            "component": "test2/test222"
+          },
+          {
+            "path": "test2-2",
+            "name": "test2-2",
+            "component": "test2/test2-2"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -19,6 +19,34 @@ export default new Router({
       // which is lazy-loaded when the route is visited.
       component: () =>
         import(/* webpackChunkName: "about" */ "./views/About.vue")
+    },
+    {
+      path: '/manage',
+      name: 'HisManage',
+      component: require('@/views/HisManage').default,
+      children: [
+        {
+          path: "testy",
+          component: require('@/components/test2/testy').default,
+        },
+        {
+          path: "test2",
+          name: "test2",
+          component: require('@/views/Layout').default,
+          children: [
+            {
+              path: "test222",
+              name: "test2-1",
+              component: require('@/components/test2/test222').default,
+            },
+            {
+              path: "test2-2",
+              name: "test2-2",
+              component: require('@/components/test2/test2-2').default,
+            }
+          ]
+        }
+      ]
     }
   ]
 });
