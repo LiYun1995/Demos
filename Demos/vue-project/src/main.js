@@ -8,9 +8,12 @@ import 'vx-easyui/dist/themes/vue.css';
 import EasyUI from 'vx-easyui';
 import iView from 'iview';
 import 'iview/dist/styles/iview.css';
+import VueHighlightJS from 'vue-highlightjs'
+import 'highlight.js/styles/an-old-hope.css'
+Vue.use(VueHighlightJS)
 Vue.use(iView);
 Vue.use(EasyUI);
-console.log(Vue.config);
+// console.log(Vue.config);
 Vue.config.productionTip = false;
 
 new Vue({
