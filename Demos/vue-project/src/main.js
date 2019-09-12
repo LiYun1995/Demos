@@ -10,9 +10,19 @@ import iView from 'iview';
 import 'iview/dist/styles/iview.css';
 import VueHighlightJS from 'vue-highlightjs'
 import 'highlight.js/styles/an-old-hope.css'
+import 'animate.css'
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
+
+Vue.use(ElementUI)
 Vue.use(VueHighlightJS)
 Vue.use(iView);
 Vue.use(EasyUI);
+Vue.directive('focus', {
+    inserted: (el) => {
+        el.focus()
+    }
+})
 // console.log(Vue.config);
 Vue.config.productionTip = false;
 

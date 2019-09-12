@@ -15,6 +15,8 @@
             </CarouselItem>
         </Carousel>
         <h2>whats your problem</h2>
+        <input type="text" v-focus>
+        <img src="http://172.31.210.191:8190/imgs//1565768127409_450.png" alt="no picture">
     </div>
 </template>
 

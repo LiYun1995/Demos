@@ -1,12 +1,12 @@
 <template>
   <div id="app">
-    <div id="nav">
+    <!-- <div id="nav">
       <router-link to="/">Home</router-link>|
       <router-link to="/about">About</router-link>
     </div>
     <div class="topTitle">
       <router-view name="title" />
-    </div>
+    </div> -->
     <router-view />
   </div>
 </template>
@@ -20,9 +20,9 @@
   color: #2c3e50;
   width: 100%;
   height: 100%;
-  display: flex;
+  /* display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; */
 }
 /* body{
   min-width: 1500px;

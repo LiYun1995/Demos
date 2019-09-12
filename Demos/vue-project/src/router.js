@@ -50,6 +50,11 @@ export default new Router({
           ]
         }
       ]
+    },
+    {
+      path:'/animate',
+      name: 'animate',
+      component: resolve => require(['@/views/Animate'], resolve)
     }
   ]
 });
