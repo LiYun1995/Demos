@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .box {
+            height: 500px;
+            background-color: black;
+            overflow: hidden;
+        }
+
+        .mybox-leave-active,
+        .mybox-enter-active {
+            transition: all 1s ease;
+        }
+
+        .mybox-leave-active,
+        .mybox-enter {
+            height: 0px !important;
+        }
+
+        .mybox-leave,
+        .mybox-enter-active {
+            height: 500px;
+        }
+
+        .fuck-enter,
+        .fuck-leave-to {
+            opacity: 0;
+        }
+
+        .fuck-enter-acitve,
+        .fuck-leave-active {
+            transition: opacity 1s;
+        }
+
+        .test {
+            position: absolute;
+            left: 300px;
+            top: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id='app'>
+        　　<transition name="fuck">
+            　　　<div class="test" v-if='show' key='hello'>hello world</div>
+            <div class="test" v-else key='bye'>bye world</div>
+            　　
+        </transition>
+        　　<button @click='handleClick'>切换</button>
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            show: true
+        },
+        methods: {
+            handleClick: function () {
+                this.show = !this.show;
+            }
+        }
+    })
+</script>
+
+</html>
+<style>
+
+</style>

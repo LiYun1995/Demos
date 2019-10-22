@@ -6,10 +6,11 @@
     </div>
     <div class="topTitle">
       <router-view name="title" />
-    </div> -->
+    </div>-->
     <router-view />
   </div>
 </template>
+
 
 <style>
 #app {

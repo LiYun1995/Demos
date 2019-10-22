@@ -13,11 +13,19 @@ import 'highlight.js/styles/an-old-hope.css'
 import 'animate.css'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import IM from './huanxin/webim'
+import VueQuillEditor from 'vue-quill-editor'
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
+
+Vue.use(IM)
 
 Vue.use(ElementUI)
 Vue.use(VueHighlightJS)
 Vue.use(iView);
 Vue.use(EasyUI);
+Vue.use(VueQuillEditor)
 Vue.directive('focus', {
     inserted: (el) => {
         el.focus()

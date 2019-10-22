@@ -27,8 +27,9 @@
     <button @click="testStateChange">改变状态</button>-->
   </div>
 </template>
-
 <script>
+// import "http://webim.kefu.easemob.com/webim/easemob.js?configId=159f495a-da59-4b44-9728-79ed9f7268d1";
+// import "http://webim.kefu.easemob.com/webim/easemob.js";
 // @ is an alias to /src
 import MTable from "@/components/Table.vue";
 import LModal from "@/components/Modal.vue";
@@ -145,6 +146,33 @@ export default {
   mounted() {
     // gaoliang.hljs.initHighlightingOnLoad();
     // console.log(this.$store.state.tabItems);
+    this.$imConn.open({
+      apiUrl: WebIM.config.apiURL,
+      user: " hx - username",
+      pwd: "hx - password",
+      appKey: WebIM.config.appkey
+    });
+    // document.cookie = "username=John Doe";
+    // console.log(document.cookie);
+    // window.easemobim = window.easemobim || {};
+    // console.log(window.easemobim);
+    // easemobim.config = {
+    //   configId: "159f495a-da59-4b44-9728-79ed9f7268d1",
+    //   buttonText: "呼叫呼叫",
+    //   dialogWidth: "360px",
+    //   dialogHeight: "550px",
+    //   dialogPosition: { x: "10px", y: "10px" },
+    //   visitor: {
+    //     trueName: "黎小冷",
+    //     qq: "567**34",
+    //     phone: "188****8888",
+    //     companyName: "环信",
+    //     userNickname: "我是黎小冷",
+    //     description: "描述信息",
+    //     email: "123456@**.com",
+    //     tags: ["vip1", "vip2"]
+    //   }
+    // };
   }
 };
 </script>
